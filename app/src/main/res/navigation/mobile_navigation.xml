@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_list_view" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="paul.barthuel.go4lunch.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:id="@+id/navigation_workmates"
+        android:name="paul.barthuel.go4lunch.ui.workmates.WorkmatesFragment"
+        android:label="@string/title_workmates"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
