@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
     <string name="title_activity_search_restaurant">SearchRestaurantActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_list_view">List View</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_map_view">Map View</string>
 </resources>
