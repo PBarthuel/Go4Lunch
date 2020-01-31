@@ -10,7 +10,7 @@ public class ListViewViewModel extends ViewModel {
 
     public ListViewViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        mText.setValue("This is ListView fragment");
     }
 
     public LiveData<String> getText() {

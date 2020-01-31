@@ -18,6 +18,15 @@ public class ListViewFragment extends Fragment {
 
     private ListViewViewModel listViewViewModel;
 
+    public static ListViewFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        ListViewFragment fragment = new ListViewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         listViewViewModel =

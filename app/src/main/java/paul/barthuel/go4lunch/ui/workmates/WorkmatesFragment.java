@@ -18,6 +18,15 @@ public class WorkmatesFragment extends Fragment {
 
     private WorkmatesViewModel workmatesViewModel;
 
+    public static WorkmatesFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        WorkmatesFragment fragment = new WorkmatesFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         workmatesViewModel =

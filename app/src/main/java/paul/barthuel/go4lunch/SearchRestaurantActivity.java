@@ -1,14 +1,17 @@
 package paul.barthuel.go4lunch;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import paul.barthuel.go4lunch.ui.list_view.ListViewFragment;
+import paul.barthuel.go4lunch.ui.map_view.LocalisationFragment;
+import paul.barthuel.go4lunch.ui.workmates.WorkmatesFragment;
 
 public class SearchRestaurantActivity extends AppCompatActivity {
 
@@ -18,14 +21,49 @@ public class SearchRestaurantActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_restaurant);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_localisation, R.id.navigation_list_view, R.id.navigation_workmates)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+
+        if(savedInstanceState == null) {
+            displayedfragment(0);
+        }
+
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.navigation_localisation:
+                        displayedfragment(0);
+                        break;
+                    case R.id.navigation_list_view:
+                        displayedfragment(1);
+                        break;
+                    case R.id.navigation_workmates:
+                        displayedfragment(2);
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+    private void displayedfragment(int fragmentNumber) {
+        Fragment fragment;
+        switch (fragmentNumber) {
+            case 0:
+                fragment = LocalisationFragment.newInstance();
+                break;
+            case 1:
+                fragment = ListViewFragment.newInstance();
+                break;
+            case 2:
+                fragment = WorkmatesFragment.newInstance();
+                break;
+            default:
+                throw new IllegalStateException("Incorrect fragment number : " + fragmentNumber);
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
 }

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "518578849380-jrkc9ed54c9uor1bja7iktg808r0kcpv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "paul.barthuel.go4lunch",
+            "certificate_hash": "8476cbeb502e5f0991d02aef5b793d6ed78a1248"
+          }
+        },
+        {
           "client_id": "518578849380-600d244dra9seu6ubduvoeajsvq7gssj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -36,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "518578849380-t6tsl3kbolnku0d1v1ctjgp9irhs700o.apps.googleusercontent.com",
+              "client_id": "518578849380-ss08ghgbk6ontn6230tnr3r2fgqfl5qj.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
