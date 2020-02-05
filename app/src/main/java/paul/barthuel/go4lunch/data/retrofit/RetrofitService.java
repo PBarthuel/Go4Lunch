@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitService {
 
     private static RetrofitService sInstance;
-    private Retrofit retrofit;
+    private GooglePlacesAPI googlePlacesAPI;
 
     private RetrofitService() {
 
@@ -32,18 +32,20 @@ public class RetrofitService {
                         Request request = chain.request();
 
                         HttpUrl url = request.url().newBuilder()
-                                .addQueryParameter("api-key", "AIzaSyDmRaHcRND0OqIh2fPoFsGzuVHDrg6C6vI")
+                                .addQueryParameter("api-key", "AIzaSyBpAscDhuNu69txHj8f1R5zlyHo4mTiSwg")
                                 .build();
                         request = request.newBuilder().url(url).build();
                         return chain.proceed(request);
                     }
                 }).build();
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://maps.googleapis.com/")
                 .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
+        googlePlacesAPI = retrofit.create(GooglePlacesAPI.class);
 
     }
 
@@ -54,8 +56,7 @@ public class RetrofitService {
         return sInstance;
     }
 
-
-    public <T> T create(Class<T> clazz) {
-        return retrofit.create(clazz);
+    public GooglePlacesAPI getGooglePlacesAPI() {
+        return googlePlacesAPI;
     }
 }

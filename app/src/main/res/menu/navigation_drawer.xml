@@ -6,6 +6,7 @@
         android:id="@+id/menu_activity_search"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/search_restaurant_search"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
 </menu>

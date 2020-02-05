@@ -1,6 +1,5 @@
 package paul.barthuel.go4lunch;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
 import paul.barthuel.go4lunch.ui.list_view.ListViewFragment;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationFragment;
