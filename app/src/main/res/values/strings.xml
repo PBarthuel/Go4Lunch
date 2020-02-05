@@ -1,8 +1,22 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
     <string name="title_activity_search_restaurant">SearchRestaurantActivity</string>
+
+
     <string name="title_list_view">List View</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_map_view">Map View</string>
     <string name="title_workmates">Workmates</string>
+
+
+    <string name="search_restaurant_search">Search</string>
+    <string name="go4Lunch">Go4Lunch</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <string name="menu_your_lunch">YOUR LUNCH</string>
+    <string name="menu_settings">SETTINGS</string>
+    <string name="menu_logout">LOGOUT</string>
 </resources>

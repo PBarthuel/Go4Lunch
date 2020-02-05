@@ -31,7 +31,8 @@
 
         <activity
             android:name=".SearchRestaurantActivity"
-            android:label="@string/title_activity_search_restaurant" />
+            android:label="@string/title_activity_search_restaurant"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
