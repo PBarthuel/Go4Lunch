@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -14,10 +15,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import paul.barthuel.go4lunch.ActualLocationRepository;
+import paul.barthuel.go4lunch.ViewModelFactory;
 
 public class LocalisationFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     private static final int REQUEST_FINE_LOCATION = 0;
+    private LocalisationViewModel mLocalisationViewModel;
 
     public static LocalisationFragment newInstance() {
 
@@ -44,6 +47,7 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
         if(checkPermissions()) {
             map.setMyLocationEnabled(true);
             ActualLocationRepository.getInstance().initLocation(requireContext());
+            mLocalisationViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
         }
     }
 

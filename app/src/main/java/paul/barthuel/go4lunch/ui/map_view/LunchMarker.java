@@ -1,6 +1,6 @@
 package paul.barthuel.go4lunch.ui.map_view;
 
-class LunchMarker {
+public class LunchMarker {
 
     public double getLatitude() {
         return latitude;
