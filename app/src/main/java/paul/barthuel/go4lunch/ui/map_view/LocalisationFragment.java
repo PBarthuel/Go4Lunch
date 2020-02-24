@@ -1,11 +1,14 @@
 package paul.barthuel.go4lunch.ui.map_view;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +24,7 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
 
     private static final int REQUEST_FINE_LOCATION = 0;
     private LocalisationViewModel mLocalisationViewModel;
+    private GoogleMap googleMap;
 
     public static LocalisationFragment newInstance() {
 
@@ -30,9 +34,24 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
         fragment.setArguments(args);
         return fragment;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLocalisationViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
+        mLocalisationViewModel.getUiModelsLiveData().observe(this, new Observer<LunchMarker>() {
+            @Override
+            public void onChanged(LunchMarker lunchMarker) {
+                googleMap.addMarker(
+                    new MarkerOptions().position(
+                        new LatLng(
+                            lunchMarker.getLatitude(),
+                            lunchMarker.getLongitude()
+                        )
+                    ).title("courgette")
+                );
+            }
+        });
     }
 
     @Override
@@ -42,18 +61,25 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mLocalisationViewModel.hasPermissions(checkPermissions());
+    }
+
+    @Override
     public void onMapReady(GoogleMap map) {
-        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        if(checkPermissions()) {
+        googleMap = map;
+        mLocalisationViewModel.onMapReady();
+        boolean hasLocationPermissions = checkPermissions();
+        if (hasLocationPermissions) {
             map.setMyLocationEnabled(true);
-            ActualLocationRepository.getInstance().initLocation(requireContext());
-            mLocalisationViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
         }
+        mLocalisationViewModel.hasPermissions(hasLocationPermissions);
     }
 
     private boolean checkPermissions() {
         if (ContextCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             requestPermissions();
@@ -63,7 +89,7 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
 
     private void requestPermissions() {
         ActivityCompat.requestPermissions(requireActivity(),
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_FINE_LOCATION);
+            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+            REQUEST_FINE_LOCATION);
     }
 }
