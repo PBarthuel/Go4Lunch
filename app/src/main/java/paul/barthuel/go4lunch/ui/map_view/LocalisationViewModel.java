@@ -1,16 +1,25 @@
 package paul.barthuel.go4lunch.ui.map_view;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import android.location.Location;
+
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.google.android.gms.maps.MapView;
+import paul.barthuel.go4lunch.ActualLocationRepository;
 
 public class LocalisationViewModel extends ViewModel {
 
-    public LocalisationViewModel() {
+    private MediatorLiveData<LunchMarker> mediatorLiveData = new MediatorLiveData<>();
+
+    public LocalisationViewModel(ActualLocationRepository repository) {
+
+        mediatorLiveData.addSource(repository.getLocationLiveData(), new Observer<Location>() {
+            @Override
+            public void onChanged(Location location) {
+                mediatorLiveData.setValue(new LunchMarker(location.getLatitude(), location.getLongitude()));
+            }
+        });
 
     }
-
-
 }

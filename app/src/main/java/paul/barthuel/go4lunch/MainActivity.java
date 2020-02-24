@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initialize Facebook Login button
+        //Initialize Facebook Login button
         /*CallbackManager mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.facebook_button);
         loginButton.setReadPermissions("email", "public_profile");

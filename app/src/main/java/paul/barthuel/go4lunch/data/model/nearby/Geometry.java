@@ -8,13 +8,13 @@ public class Geometry {
 
     @SerializedName("location")
     @Expose
-    private Location location;
+    private NearbyLocation location;
 
-    public Location getLocation() {
+    public NearbyLocation getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(NearbyLocation location) {
         this.location = location;
     }
 

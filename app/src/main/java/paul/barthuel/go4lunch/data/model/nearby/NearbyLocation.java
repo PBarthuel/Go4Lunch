@@ -4,7 +4,7 @@ package paul.barthuel.go4lunch.data.model.nearby;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Location {
+public class NearbyLocation {
 
     @SerializedName("lat")
     @Expose
