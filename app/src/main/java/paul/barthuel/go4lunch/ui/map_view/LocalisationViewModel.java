@@ -4,7 +4,6 @@ import android.location.Location;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
@@ -14,13 +13,13 @@ public class LocalisationViewModel extends ViewModel {
 
     private ActualLocationRepository actualLocationRepository;
     private MediatorLiveData<LunchMarker> mediatorLiveDataLunchMarker = new MediatorLiveData<>();
-    private MediatorLiveData<Boolean> mediatorLiveDataShouldTriggerGps = new MediatorLiveData<>();
-    private MutableLiveData<Boolean> mutableLiveDataMapReady = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mutableLiveDataLocationPermissions = new MutableLiveData<>();
 
     LiveData<LunchMarker> getUiModelsLiveData() {
         return mediatorLiveDataLunchMarker;
     }
+
+    private boolean isMapReady;
+    private boolean hasLocationPermissions;
 
     public LocalisationViewModel(ActualLocationRepository repository) {
 
@@ -32,31 +31,21 @@ public class LocalisationViewModel extends ViewModel {
                 mediatorLiveDataLunchMarker.setValue(new LunchMarker(location.getLatitude(), location.getLongitude()));
             }
         });
-        mediatorLiveDataShouldTriggerGps.addSource(mutableLiveDataMapReady, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isMapReady) {
-                enableGps(isMapReady, mutableLiveDataLocationPermissions.getValue());
-            }
-        });
-        mediatorLiveDataShouldTriggerGps.addSource(mutableLiveDataLocationPermissions, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean hasPermissions) {
-                enableGps(mutableLiveDataMapReady.getValue(), hasPermissions);
-            }
-        });
     }
 
-    private void enableGps(Boolean isMapReady, Boolean locationPermissions) {
-        if (isMapReady && locationPermissions) {
+    private void enableGps() {
+        if (isMapReady && hasLocationPermissions) {
             actualLocationRepository.initLocation();
         }
     }
 
     public void onMapReady() {
-        mutableLiveDataMapReady.setValue(true);
+        isMapReady = true;
+
+        enableGps();
     }
 
     public void hasPermissions(boolean hasLocationPermissions) {
-        mutableLiveDataLocationPermissions.setValue(hasLocationPermissions);
+        this.hasLocationPermissions = hasLocationPermissions;
     }
 }
