@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import paul.barthuel.go4lunch.data.retrofit.NearbyAPIRepository;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
@@ -39,7 +40,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(LocalisationViewModel.class)) {
             return (T) new LocalisationViewModel(
-                    actualLocationRepository
+                    actualLocationRepository,
+                    new NearbyAPIRepository() //TODO singleton + injection factory
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");

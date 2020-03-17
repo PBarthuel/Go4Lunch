@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "518578849380-vrvnmhvnj1drjhr29ae0ckbslm9vo0j4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "paul.barthuel.go4lunch",
+            "certificate_hash": "8d0b6253a86a5cde1c76c45e7917a20ebedbaf6d"
+          }
+        },
+        {
           "client_id": "518578849380-jrkc9ed54c9uor1bja7iktg808r0kcpv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

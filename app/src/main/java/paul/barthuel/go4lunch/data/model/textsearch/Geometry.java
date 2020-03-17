@@ -8,17 +8,17 @@ public class Geometry {
 
     @SerializedName("location")
     @Expose
-    private Location location;
+    private TextSearchLocation textSearchLocation;
     @SerializedName("viewport")
     @Expose
     private Viewport viewport;
 
-    public Location getLocation() {
-        return location;
+    public TextSearchLocation getTextSearchLocation() {
+        return textSearchLocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setTextSearchLocation(TextSearchLocation textSearchLocation) {
+        this.textSearchLocation = textSearchLocation;
     }
 
     public Viewport getViewport() {

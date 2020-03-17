@@ -8,8 +8,10 @@ import retrofit2.http.Query;
 
 public interface GooglePlacesAPI {
 
-    @GET("maps/api/place/nearbysearch/")
-    Call<NearbyResponse> nearbySearch (@Query("location") String location,
-                                       @Query("radius") String radius);
+    @GET("maps/api/place/nearbysearch/json")
+    Call<NearbyResponse> getNearbySearch(@Query("location") String location,
+                                         @Query("radius") int radius,
+                                         @Query("type") String type,
+                                         @Query("key") String key);
 
 }

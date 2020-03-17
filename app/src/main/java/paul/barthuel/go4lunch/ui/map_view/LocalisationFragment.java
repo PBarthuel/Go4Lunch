@@ -17,6 +17,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import paul.barthuel.go4lunch.ActualLocationRepository;
 import paul.barthuel.go4lunch.ViewModelFactory;
 
@@ -39,17 +41,19 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLocalisationViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
-        mLocalisationViewModel.getUiModelsLiveData().observe(this, new Observer<LunchMarker>() {
+        mLocalisationViewModel.getUiModelsLiveData().observe(this, new Observer<List<LunchMarker>>() {
             @Override
-            public void onChanged(LunchMarker lunchMarker) {
-                googleMap.addMarker(
-                    new MarkerOptions().position(
-                        new LatLng(
-                            lunchMarker.getLatitude(),
-                            lunchMarker.getLongitude()
-                        )
-                    ).title("courgette")
-                );
+            public void onChanged(List<LunchMarker> lunchMarkers) {
+                for (LunchMarker lunchMarker : lunchMarkers) {
+                    googleMap.addMarker(
+                            new MarkerOptions().position(
+                                    new LatLng(
+                                            lunchMarker.getLatitude(),
+                                            lunchMarker.getLongitude()
+                                    )
+                            ).title(lunchMarker.getName())
+                    );
+                }
             }
         });
     }
@@ -79,7 +83,7 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
 
     private boolean checkPermissions() {
         if (ContextCompat.checkSelfPermission(requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             requestPermissions();
@@ -89,7 +93,7 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
 
     private void requestPermissions() {
         ActivityCompat.requestPermissions(requireActivity(),
-            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-            REQUEST_FINE_LOCATION);
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_FINE_LOCATION);
     }
 }

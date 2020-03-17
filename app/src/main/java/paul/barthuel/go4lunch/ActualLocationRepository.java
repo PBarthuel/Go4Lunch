@@ -15,9 +15,18 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.MapFragment;
 
+import java.io.IOException;
+
+import paul.barthuel.go4lunch.data.model.nearby.NearbyLocation;
+import paul.barthuel.go4lunch.data.retrofit.GooglePlacesAPI;
+import paul.barthuel.go4lunch.data.retrofit.RetrofitService;
+import paul.barthuel.go4lunch.ui.map_view.LunchMarker;
+import retrofit2.Call;
+
 public class ActualLocationRepository {
 
     private static ActualLocationRepository sInstance;
+    private Call<GooglePlacesAPI> callGooglePlacesAPI;
 
     public static ActualLocationRepository getInstance() {
 
@@ -28,11 +37,13 @@ public class ActualLocationRepository {
         return sInstance;
     }
 
+    private MutableLiveData<Location> mutableLiveData = new MutableLiveData<>();
+
+
     public LiveData<Location> getLocationLiveData() {
         return mutableLiveData;
     }
 
-    private MutableLiveData<Location> mutableLiveData = new MutableLiveData<>();
 
 
     public void initLocation() {
@@ -43,8 +54,8 @@ public class ActualLocationRepository {
 
         mFusedLocation.requestLocationUpdates(new LocationRequest()
                         .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                        .setFastestInterval(10000)
-                        .setInterval(60000)
+                        .setFastestInterval(5000)
+                        .setInterval(10000)
                 , new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
