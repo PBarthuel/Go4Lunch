@@ -13,7 +13,7 @@ import java.util.List;
 import paul.barthuel.go4lunch.ActualLocationRepository;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
 import paul.barthuel.go4lunch.data.model.nearby.Result;
-import paul.barthuel.go4lunch.data.retrofit.NearbyAPIRepository;
+import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 
 public class LocalisationViewModel extends ViewModel {
 
@@ -28,7 +28,7 @@ public class LocalisationViewModel extends ViewModel {
     private boolean hasLocationPermissions;
 
     public LocalisationViewModel(final ActualLocationRepository repository,
-                                 final NearbyAPIRepository nearbyRepository) {
+                                 final NearbyRepository nearbyRepository) {
 
         actualLocationRepository = repository;
 

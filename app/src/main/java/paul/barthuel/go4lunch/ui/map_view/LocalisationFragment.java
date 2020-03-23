@@ -19,8 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-import paul.barthuel.go4lunch.ActualLocationRepository;
-import paul.barthuel.go4lunch.ViewModelFactory;
+import paul.barthuel.go4lunch.injections.ViewModelFactory;
 
 public class LocalisationFragment extends SupportMapFragment implements OnMapReadyCallback {
 

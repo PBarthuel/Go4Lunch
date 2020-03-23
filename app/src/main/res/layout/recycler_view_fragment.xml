@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recycler_view"
+    android:id="@+id/list_restaurant_recycler_view"
     tools:listitem="@layout/restaurant_description_item">
 
 </androidx.recyclerview.widget.RecyclerView>

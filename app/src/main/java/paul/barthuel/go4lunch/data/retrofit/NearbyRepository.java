@@ -10,7 +10,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NearbyAPIRepository {
+public class NearbyRepository {
 
     public LiveData<NearbyResponse> getNearbyForLocation(Location location) {
         final MutableLiveData<NearbyResponse> liveData = new MutableLiveData<>();

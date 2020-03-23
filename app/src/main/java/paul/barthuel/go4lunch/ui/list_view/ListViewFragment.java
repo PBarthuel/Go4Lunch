@@ -4,19 +4,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import paul.barthuel.go4lunch.R;
+import paul.barthuel.go4lunch.RestaurantInfoAdapter;
+import paul.barthuel.go4lunch.injections.ViewModelFactory;
 
-public class ListViewFragment extends Fragment {
+public class ListViewFragment extends Fragment implements RestaurantInfoAdapter.Listener {
 
-    private ListViewViewModel listViewViewModel;
+    private ListViewViewModel mListViewViewModel;
 
     public static ListViewFragment newInstance() {
 
@@ -27,18 +32,32 @@ public class ListViewFragment extends Fragment {
         return fragment;
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        listViewViewModel =
-                ViewModelProviders.of(this).get(ListViewViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_list_view, container, false);
-        final TextView textView = root.findViewById(R.id.text_list_view);
-        listViewViewModel.getText().observe(this, new Observer<String>() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mListViewViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(ListViewViewModel.class);
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.recycler_view_fragment, container, false);
+        RecyclerView recyclerView = view.findViewById(R.id.list_restaurant_recycler_view);
+        final RestaurantInfoAdapter adapter = new RestaurantInfoAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mListViewViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantInfo>>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onChanged(List<RestaurantInfo> restaurantInfos) {
+                adapter.setNewData(restaurantInfos);
             }
         });
-        return root;
+        return view;
+    }
+
+    @Override
+    public void onRestaurantInfoClick(RestaurantInfo restaurantInfo) {
+
     }
 }

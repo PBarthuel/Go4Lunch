@@ -14,4 +14,5 @@ public interface GooglePlacesAPI {
                                          @Query("type") String type,
                                          @Query("key") String key);
 
+    //TODO CREE CALL PLACE DETAIL
 }
