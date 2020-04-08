@@ -71,4 +71,14 @@
         tools:text="15cm to 20cm"
         tools:ignore="PrivateResource" />
 
+    <TextView
+        android:id="@+id/main_item_tv_global"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/restaurant_description_item_schedule"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

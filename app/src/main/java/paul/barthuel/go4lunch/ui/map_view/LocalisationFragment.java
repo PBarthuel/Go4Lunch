@@ -24,7 +24,7 @@ import paul.barthuel.go4lunch.injections.ViewModelFactory;
 public class LocalisationFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     private static final int REQUEST_FINE_LOCATION = 0;
-    private LocalisationViewModel mLocalisationViewModel;
+    private LocalisationViewModel mViewModel;
     private GoogleMap googleMap;
 
     public static LocalisationFragment newInstance() {
@@ -39,8 +39,8 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocalisationViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
-        mLocalisationViewModel.getUiModelsLiveData().observe(this, new Observer<List<LunchMarker>>() {
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
+        mViewModel.getUiModelsLiveData().observe(this, new Observer<List<LunchMarker>>() {
             @Override
             public void onChanged(List<LunchMarker> lunchMarkers) {
                 for (LunchMarker lunchMarker : lunchMarkers) {
@@ -66,18 +66,18 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mLocalisationViewModel.hasPermissions(checkPermissions());
+        mViewModel.hasPermissions(checkPermissions());
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        mLocalisationViewModel.onMapReady();
+        mViewModel.onMapReady();
         boolean hasLocationPermissions = checkPermissions();
         if (hasLocationPermissions) {
             map.setMyLocationEnabled(true);
         }
-        mLocalisationViewModel.hasPermissions(hasLocationPermissions);
+        mViewModel.hasPermissions(hasLocationPermissions);
     }
 
     private boolean checkPermissions() {

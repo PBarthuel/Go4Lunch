@@ -1,6 +1,5 @@
 package paul.barthuel.go4lunch;
 
-import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
 
@@ -13,14 +12,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.MapFragment;
 
-import java.io.IOException;
-
-import paul.barthuel.go4lunch.data.model.nearby.NearbyLocation;
 import paul.barthuel.go4lunch.data.retrofit.GooglePlacesAPI;
-import paul.barthuel.go4lunch.data.retrofit.RetrofitService;
-import paul.barthuel.go4lunch.ui.map_view.LunchMarker;
 import retrofit2.Call;
 
 public class ActualLocationRepository {

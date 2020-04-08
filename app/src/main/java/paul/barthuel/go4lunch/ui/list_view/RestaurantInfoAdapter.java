@@ -1,4 +1,4 @@
-package paul.barthuel.go4lunch;
+package paul.barthuel.go4lunch.ui.list_view;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +9,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
-import paul.barthuel.go4lunch.ui.list_view.RestaurantInfo;
+import paul.barthuel.go4lunch.R;
 
 public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAdapter.ViewHolder> {
 
@@ -53,7 +55,9 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
         private final TextView mTextViewAddress;
         private final TextView mTextViewOpeningHours;
         private final TextView mTextViewDistance;
-        //private final ImageView mImageViewThumbnail;
+        private final TextView mTextViewGlobal;
+        private final ImageView mImageViewThumbnail;
+
 
 
         ViewHolder(@NonNull View itemView) {
@@ -63,8 +67,8 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
             mTextViewAddress = itemView.findViewById(R.id.restaurant_description_item_address);
             mTextViewOpeningHours = itemView.findViewById(R.id.restaurant_description_item_schedule);
             mTextViewDistance = itemView.findViewById(R.id.restaurant_description_item_distance);
-            //mImageViewThumbnail = itemView.findViewById(R.id.restaurant_description_item_iv_thumbnail);
-            //TODO utiliser glide
+            mTextViewGlobal = itemView.findViewById(R.id.main_item_tv_global);
+            mImageViewThumbnail = itemView.findViewById(R.id.restaurant_description_item_iv_thumbnail);
         }
 
         private void bind(final RestaurantInfo restaurantInfo, final Listener listener) {
@@ -73,14 +77,18 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
             mTextViewAddress.setText(restaurantInfo.getAddress());
             mTextViewOpeningHours.setText(restaurantInfo.getOpeningHours());
             mTextViewDistance.setText(restaurantInfo.getDistance());
-
+            Glide.with(mImageViewThumbnail).load(restaurantInfo.getImage()).into(mImageViewThumbnail);
+            mTextViewGlobal.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onRestaurantInfoClick(restaurantInfo);
+                }
+            });
         }
     }
 
     public interface Listener {
         void onRestaurantInfoClick(RestaurantInfo restaurantInfo);
-        //TODO Lié ça avec la nouvelle activité qui affiche les details
-        //TODO dans l'activité de detail juste envoyé l'id du restau
     }
 }
 

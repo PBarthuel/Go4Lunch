@@ -8,6 +8,7 @@ public class RestaurantInfo {
     private String distance;
     private String rating;
     private String image;
+    private String id;
 
     public String getName() {
         return name;
@@ -33,12 +34,17 @@ public class RestaurantInfo {
         return image;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public RestaurantInfo(String name,
                           String address,
                           String openingHours,
                           String distance,
                           String rating,
-                          String image) {
+                          String image,
+                          String id) {
 
         this.name = name;
         this.address = address;
@@ -46,5 +52,8 @@ public class RestaurantInfo {
         this.distance = distance;
         this.rating = rating;
         this.image = image;
+        this.id = id;
     }
+
+
 }

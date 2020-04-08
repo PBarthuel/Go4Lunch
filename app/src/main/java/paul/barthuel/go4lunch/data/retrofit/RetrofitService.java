@@ -32,7 +32,7 @@ public class RetrofitService {
                         Request request = chain.request();
 
                         HttpUrl url = request.url().newBuilder()
-                                .addQueryParameter("api-key", "AIzaSyBpAscDhuNu69txHj8f1R5zlyHo4mTiSwg")
+                                //.addQueryParameter("api-key", "AIzaSyBpAscDhuNu69txHj8f1R5zlyHo4mTiSwg")
                                 .build();
                         request = request.newBuilder().url(url).build();
                         return chain.proceed(request);
