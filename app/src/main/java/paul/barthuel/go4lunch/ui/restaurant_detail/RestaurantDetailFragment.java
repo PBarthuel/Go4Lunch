@@ -8,12 +8,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
-import paul.barthuel.go4lunch.ui.map_view.LocalisationViewModel;
 
 public class RestaurantDetailFragment extends Fragment {
 
@@ -43,5 +42,11 @@ public class RestaurantDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(RestaurantDetailViewModel.class);
         mViewModel.init(getArguments().getString(KEY_ID));
+        mViewModel.getLiveDataResultDetail().observe(getViewLifecycleOwner(), new Observer<RestaurantDetailInfo>() {
+            @Override
+            public void onChanged(RestaurantDetailInfo restaurantDetailInfo) {
+
+            }
+        });
     }
 }

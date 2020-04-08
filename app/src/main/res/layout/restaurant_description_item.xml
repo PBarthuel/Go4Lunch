@@ -64,7 +64,7 @@
         android:padding="10dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textColor="@color/com_facebook_button_background_color_focused_disabled"
+        android:textColor="#F08"
         android:textStyle="normal"
         app:layout_constraintEnd_toStartOf="@id/restaurant_description_item_iv_thumbnail"
         app:layout_constraintTop_toTopOf="parent"
