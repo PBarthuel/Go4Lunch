@@ -16,7 +16,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
+
     <string name="menu_your_lunch">YOUR LUNCH</string>
     <string name="menu_settings">SETTINGS</string>
     <string name="menu_logout">LOGOUT</string>
+
+    <string name="fb_login_protocol_scheme">fb2762630620450399</string>
+    <string name="facebook_app_id">2762630620450399</string>
 </resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.restaurant_detail.RestaurantDetailActivity"
+    tools:showIn="@layout/restaurant_detail_fragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_scrolling_restaurant_detail_cl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/content_scrolling_restaurant_detail_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="#FFA500"
+            android:paddingLeft="16dp"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:gravity="bottom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/content_scrolling_restaurant_detail_cl"
+            tools:text="courgette" />
+
+        <TextView
+            android:id="@+id/content_scrolling_restaurant_detail_address_tv"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="#FFA500"
+            android:paddingLeft="16dp"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/content_scrolling_restaurant_detail_call_iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_title_tv"
+            tools:text="courgette" />
+
+        <ImageView
+            android:id="@+id/content_scrolling_restaurant_detail_call_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="76dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_address_tv" />
+
+        <ImageView
+            android:id="@+id/content_scrolling_restaurant_detail_like_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="76dp"
+            app:layout_constraintStart_toEndOf="@id/content_scrolling_restaurant_detail_call_iv"
+            app:layout_constraintEnd_toStartOf="@id/content_scrolling_restaurant_detail_website_iv"
+            app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_address_tv" />
+
+        <ImageView
+            android:id="@+id/content_scrolling_restaurant_detail_website_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="76dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_address_tv" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/content_scrolling_restaurant_detail_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_call_iv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
