@@ -32,7 +32,8 @@
                 <ImageView
                     android:id="@+id/restaurant_detail_iv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/restaurant_detail_tb"

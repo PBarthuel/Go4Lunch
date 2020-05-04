@@ -2,6 +2,8 @@ package paul.barthuel.go4lunch;
 
 import android.app.Application;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 public class MainApplication extends Application {
 
     private static Application sApplication;
@@ -15,5 +17,6 @@ public class MainApplication extends Application {
         super.onCreate();
 
         sApplication = this;
+        AndroidThreeTen.init(this);
     }
 }

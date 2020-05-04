@@ -17,6 +17,7 @@ import paul.barthuel.go4lunch.R;
 
 public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAdapter.ViewHolder> {
 
+    //TODO essayer de changer en listView
     private List<RestaurantInfo> mList;
     private Listener listener;
 

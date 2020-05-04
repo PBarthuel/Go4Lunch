@@ -12,12 +12,13 @@
         android:layout_margin="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="centerCrop"
         tools:src="@tools:sample/avatars"
         tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/restaurant_description_item_tv_name"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:maxLines="1"
@@ -31,7 +32,7 @@
 
     <TextView
         android:id="@+id/restaurant_description_item_address"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:maxLines="1"
@@ -45,7 +46,7 @@
 
     <TextView
         android:id="@+id/restaurant_description_item_schedule"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:maxLines="1"
@@ -59,16 +60,16 @@
 
     <TextView
         android:id="@+id/restaurant_description_item_distance"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textColor="#F08"
+        android:textColor="#000000"
         android:textStyle="normal"
         app:layout_constraintEnd_toStartOf="@id/restaurant_description_item_iv_thumbnail"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="15cm to 20cm"
+        tools:text="180m"
         tools:ignore="PrivateResource" />
 
     <TextView

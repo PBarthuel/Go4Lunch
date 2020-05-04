@@ -6,13 +6,13 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_top_story"
+            android:id="@+id/nav_your_lunch"
             android:title="@string/menu_your_lunch" />
         <item
-            android:id="@+id/nav_most_popular"
+            android:id="@+id/nav_settings"
             android:title="@string/menu_settings" />
         <item
-            android:id="@+id/nav_arts"
+            android:id="@+id/nav_logout"
             android:title="@string/menu_logout" />
 
     </group>

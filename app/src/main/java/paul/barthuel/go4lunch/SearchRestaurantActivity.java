@@ -1,10 +1,13 @@
 package paul.barthuel.go4lunch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,7 +15,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import paul.barthuel.go4lunch.ui.list_view.ListViewFragment;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationFragment;
@@ -25,9 +32,22 @@ public class SearchRestaurantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_restaurant);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        BottomNavigationView bottomNavView = findViewById(R.id.bottom_nav_view);
 
         Toolbar toolbar = findViewById(R.id.search_restaurant_toolbar);
+        toolbar.setTitle("Map");
+        NavigationView navigationView = findViewById(R.id.search_restaurant_navigation_view_menu);
+
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.nav_logout) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(SearchRestaurantActivity.this,
+                        MainActivity.class));
+                finish();
+            }
+            return false;
+        });
+
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.search_restaurant_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -35,27 +55,41 @@ public class SearchRestaurantActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             displayedFragment(0);
         }
 
-        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_localisation:
-                        displayedFragment(0);
-                        break;
-                    case R.id.navigation_list_view:
-                        displayedFragment(1);
-                        break;
-                    case R.id.navigation_workmates:
-                        displayedFragment(2);
-                        break;
-                }
-                return true;
+        View drawerHeadView = navigationView.getHeaderView(0);
+        ImageView profilImageView = drawerHeadView.findViewById(R.id.head_drawer_profil_pic_iv);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Glide.with(profilImageView)
+                    .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(profilImageView);
+        }
+        TextView userNameTextView = drawerHeadView.findViewById(R.id.head_drawer_user_name_tv);
+        TextView emailAddressTextView = drawerHeadView.findViewById(R.id.head_drawer_email_tv);
+        emailAddressTextView.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        userNameTextView.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        bottomNavView.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.navigation_localisation:
+                    displayedFragment(0);
+                    toolbar.setTitle("Map");
+                    break;
+                case R.id.navigation_list_view:
+                    displayedFragment(1);
+                    toolbar.setTitle("I'm Hungry!");
+                    break;
+                case R.id.navigation_workmates:
+                    displayedFragment(2);
+                    toolbar.setTitle("Available workmates");
+                    break;
             }
+            return true;
         });
+
     }
 
     private void displayedFragment(int fragmentNumber) {
@@ -82,7 +116,7 @@ public class SearchRestaurantActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
         return true;
     }
 

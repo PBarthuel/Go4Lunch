@@ -18,6 +18,7 @@ public class WorkmatesFragment extends Fragment {
 
     private WorkmatesViewModel workmatesViewModel;
 
+    //TODO faire workMates en ajoutant la placeId du restaurant au utilisatur dans le repo
     public static WorkmatesFragment newInstance() {
 
         Bundle args = new Bundle();

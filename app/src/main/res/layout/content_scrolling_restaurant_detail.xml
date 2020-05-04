@@ -17,11 +17,11 @@
             android:id="@+id/content_scrolling_restaurant_detail_title_tv"
             android:layout_width="match_parent"
             android:layout_height="38dp"
-            android:background="#FFA500"
+            android:background="@color/colorAccent"
+            android:gravity="bottom"
             android:paddingLeft="16dp"
             android:textColor="#FFFFFF"
             android:textSize="20dp"
-            android:gravity="bottom"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/content_scrolling_restaurant_detail_cl"
             tools:text="courgette" />
@@ -38,26 +38,52 @@
             app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_title_tv"
             tools:text="courgette" />
 
-        <ImageView
+        <TextView
             android:id="@+id/content_scrolling_restaurant_detail_call_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="76dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:drawableTop="@drawable/ic_phone_orange_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Call"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/content_scrolling_restaurant_detail_like_iv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_address_tv" />
 
-        <ImageView
+        <TextView
             android:id="@+id/content_scrolling_restaurant_detail_like_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="76dp"
-            app:layout_constraintStart_toEndOf="@id/content_scrolling_restaurant_detail_call_iv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:drawableTop="@drawable/ic_star_orange_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Like"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/content_scrolling_restaurant_detail_website_iv"
+            app:layout_constraintStart_toEndOf="@id/content_scrolling_restaurant_detail_call_iv"
             app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_address_tv" />
 
-        <ImageView
+        <TextView
             android:id="@+id/content_scrolling_restaurant_detail_website_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="76dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:drawableTop="@drawable/ic_public_orange_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="WebSite"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/content_scrolling_restaurant_detail_like_iv"
             app:layout_constraintTop_toBottomOf="@id/content_scrolling_restaurant_detail_address_tv" />
 
         <androidx.recyclerview.widget.RecyclerView

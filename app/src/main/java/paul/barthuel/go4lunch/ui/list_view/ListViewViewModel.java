@@ -8,10 +8,14 @@ import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+
+import org.threeten.bp.DayOfWeek;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +24,7 @@ import java.util.Map;
 
 import paul.barthuel.go4lunch.ActualLocationRepository;
 import paul.barthuel.go4lunch.data.model.detail.Detail;
-import paul.barthuel.go4lunch.data.model.detail.ResultDetail;
+import paul.barthuel.go4lunch.data.model.detail.Period;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
 import paul.barthuel.go4lunch.data.model.nearby.Result;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
@@ -123,23 +127,53 @@ public class ListViewViewModel extends ViewModel {
 
         String name = result.getName();
         String address = result.getVicinity();
-        String openingHours;
+        String openingHours = "unknow";
+        List<Period> periods;
+        Period period;
 
         if (detail == null) {
             openingHours = null;
         } else {
-            //TODO algo pour opening hours
+            int dayNumber = getDayNumber();
             if (detail.getResultDetail().getOpeningHours() == null) {
                 openingHours = "unknown";
             } else {
-                openingHours = detail.getResultDetail().getOpeningHours().toString();
+                periods = detail.getResultDetail().getOpeningHours().getPeriods();
+                //TODO algo pour opening hours finir
+                for (int i = 0; i < periods.size(); i++) {
+                    period = periods.get(i);
+
+                    if (period.getOpen().getDay() == dayNumber) {
+
+                        String nonFormattedOpenTime = period.getOpen().getTime();
+                        LocalTime formattedOpenTime = LocalTime.parse(nonFormattedOpenTime, DateTimeFormatter.ofPattern("HHmm"));
+                        formattedOpenTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+
+                        String nonFormattedCloseTime = period.getClose().getTime();
+                        LocalTime formattedCloseTime = LocalTime.parse(nonFormattedCloseTime, DateTimeFormatter.ofPattern("HHmm"));
+                        formattedCloseTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+
+                        LocalTime localTime = LocalTime.now();
+
+                        if (localTime.isAfter(formattedOpenTime) && localTime.isBefore(formattedCloseTime)) {
+                            openingHours = "open until " + formattedCloseTime.toString();
+                        } else {
+                            String nonFormattedOpenAtTime = periods.get(i + 1).getOpen().getTime();
+                            LocalTime formattedOpenAtTime = LocalTime.parse(nonFormattedOpenAtTime, DateTimeFormatter.ofPattern("HHmm"));
+                            formattedOpenAtTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                            openingHours = "open at " + formattedOpenAtTime.toString();
+                        }
+                    }
+
+                }
             }
         }
 
         String distance = "" + distance(result.getGeometry().getLocation().getLat(),
                 result.getGeometry().getLocation().getLng(),
                 location.getLatitude(),
-                location.getLongitude());
+                location.getLongitude()) + "m";
+
         String rating = result.getReference();
 
         String photoReference = result.getPhotos().get(0).getPhotoReference();
@@ -161,6 +195,37 @@ public class ListViewViewModel extends ViewModel {
                 rating,
                 uri.toString(),
                 id);
+    }
+
+    private int getDayNumber() {
+        int dayNumber;
+        DayOfWeek day = LocalDate.now().getDayOfWeek();
+        switch (day) {
+            case SUNDAY:
+                dayNumber = 0;
+                break;
+            case MONDAY:
+                dayNumber = 1;
+                break;
+            case TUESDAY:
+                dayNumber = 2;
+                break;
+            case WEDNESDAY:
+                dayNumber = 3;
+                break;
+            case THURSDAY:
+                dayNumber = 4;
+                break;
+            case FRIDAY:
+                dayNumber = 5;
+                break;
+            case SATURDAY:
+                dayNumber = 6;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + day);
+        }
+        return dayNumber;
     }
 
     private int distance(double lat1, double lon1, double lat2, double lon2) {
