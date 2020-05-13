@@ -15,6 +15,7 @@ import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
 import paul.barthuel.go4lunch.ui.list_view.ListViewViewModel;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationViewModel;
 import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailViewModel;
+import paul.barthuel.go4lunch.ui.workmates.WorkmatesViewModel;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
@@ -86,6 +87,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         }else if (modelClass.isAssignableFrom(MainViewModel.class)) {
             return (T)new MainViewModel(FirebaseAuth.getInstance(),
                     userRepository);
+        }else if (modelClass.isAssignableFrom(WorkmatesViewModel.class)) {
+            return (T)new WorkmatesViewModel(userRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

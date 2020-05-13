@@ -85,13 +85,10 @@ public class RestaurantDetailViewModel extends ViewModel {
 
     public void goToRestaurant() {
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getPhotoUrl() != null) {
-            mRestaurantRepository.createRestaurant(id,
-                    LocalDate.now());
             mRestaurantRepository.deleteUserToRestaurant(mAuth.getCurrentUser().getUid());
             mRestaurantRepository.addUserToRestaurant(id,
                     mAuth.getCurrentUser().getUid());
-            mUserRepository.addRestaurantToUser(mAuth.getCurrentUser().getUid(),
-                    id);
+
         }
     }
 }

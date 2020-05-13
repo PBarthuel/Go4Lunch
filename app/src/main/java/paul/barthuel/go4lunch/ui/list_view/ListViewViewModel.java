@@ -50,7 +50,7 @@ public class ListViewViewModel extends ViewModel {
 
         mediatorRestaurantDetail.setValue(new HashMap<String, Detail>());
         this.placeDetailRepository = placeDetailRepository;
-        actualLocationRepository = repository;
+        this.actualLocationRepository = repository;
 
         liveDataNearby = Transformations.switchMap(
                 repository.getLocationLiveData(),

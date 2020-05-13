@@ -16,7 +16,7 @@ import paul.barthuel.go4lunch.R;
 
 public class WorkmatesFragment extends Fragment {
 
-    private WorkmatesViewModel workmatesViewModel;
+   private WorkmatesViewModel workmatesViewModel;
 
     //TODO faire workMates en ajoutant la placeId du restaurant au utilisatur dans le repo
     public static WorkmatesFragment newInstance() {
@@ -34,12 +34,12 @@ public class WorkmatesFragment extends Fragment {
                 ViewModelProviders.of(this).get(WorkmatesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
         final TextView textView = root.findViewById(R.id.text_notifications);
-        workmatesViewModel.getText().observe(this, new Observer<String>() {
+        /*workmatesViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
+        });*/
         return root;
     }
 }
