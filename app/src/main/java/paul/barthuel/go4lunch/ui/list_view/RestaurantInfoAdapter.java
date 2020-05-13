@@ -7,21 +7,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.List;
-
 import paul.barthuel.go4lunch.R;
 
-public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAdapter.ViewHolder> {
+public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, RestaurantInfoAdapter.ViewHolder> {
 
-    //TODO essayer de changer en listView
-    private List<RestaurantInfo> mList;
     private Listener listener;
 
     public RestaurantInfoAdapter(Listener listener) {
+        super(new RestaurantInfoDiffCallBack());
         this.listener = listener;
     }
 
@@ -36,18 +34,7 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int index) {
-
-        viewHolder.bind(mList.get(index), listener);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mList == null ? 0 : mList.size();
-    }
-
-    public void setNewData(List<RestaurantInfo> list) {
-        mList = list;
-        notifyDataSetChanged();
+        viewHolder.bind(getItem(index), listener);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,7 +43,7 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
         private final TextView mTextViewAddress;
         private final TextView mTextViewOpeningHours;
         private final TextView mTextViewDistance;
-        private final TextView mTextViewGlobal;
+        private final View mRoot;
         private final ImageView mImageViewThumbnail;
 
 
@@ -68,7 +55,7 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
             mTextViewAddress = itemView.findViewById(R.id.restaurant_description_item_address);
             mTextViewOpeningHours = itemView.findViewById(R.id.restaurant_description_item_schedule);
             mTextViewDistance = itemView.findViewById(R.id.restaurant_description_item_distance);
-            mTextViewGlobal = itemView.findViewById(R.id.main_item_tv_global);
+            mRoot = itemView.findViewById(R.id.restaurant_description_item_cl);
             mImageViewThumbnail = itemView.findViewById(R.id.restaurant_description_item_iv_thumbnail);
         }
 
@@ -79,7 +66,7 @@ public class RestaurantInfoAdapter extends RecyclerView.Adapter<RestaurantInfoAd
             mTextViewOpeningHours.setText(restaurantInfo.getOpeningHours());
             mTextViewDistance.setText(restaurantInfo.getDistance());
             Glide.with(mImageViewThumbnail).load(restaurantInfo.getImage()).into(mImageViewThumbnail);
-            mTextViewGlobal.setOnClickListener(new View.OnClickListener() {
+            mRoot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onRestaurantInfoClick(restaurantInfo);

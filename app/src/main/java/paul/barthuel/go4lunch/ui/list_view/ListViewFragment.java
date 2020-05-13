@@ -51,7 +51,7 @@ public class ListViewFragment extends Fragment implements RestaurantInfoAdapter.
         mViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), new Observer<List<RestaurantInfo>>() {
             @Override
             public void onChanged(List<RestaurantInfo> restaurantInfos) {
-                adapter.setNewData(restaurantInfos);
+                adapter.submitList(restaurantInfos);
             }
         });
 

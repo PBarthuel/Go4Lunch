@@ -37,6 +37,7 @@ public class ListViewViewModel extends ViewModel {
 
     private LiveData<NearbyResponse> liveDataNearby;
     private MediatorLiveData<Map<String, Detail>> mediatorRestaurantDetail = new MediatorLiveData<>();
+    private List<String> alreadyFetchId = new ArrayList<>();
 
     private MediatorLiveData<List<RestaurantInfo>> mediatorRestaurantInfo = new MediatorLiveData<>();
 
@@ -100,17 +101,20 @@ public class ListViewViewModel extends ViewModel {
         for (Result result : nearbyResponse.getResults()) {
             Detail detail = restaurantDetailMap.get(result.getPlaceId());
             if (detail == null) {
-                mediatorRestaurantDetail.addSource(
-                        placeDetailRepository.getDetailForRestaurantId(result.getPlaceId()),
-                        new Observer<Detail>() {
-                            @Override
-                            public void onChanged(Detail detail) {
-                                Map<String, Detail> map = mediatorRestaurantDetail.getValue();
-                                assert map != null;
-                                map.put(detail.getResultDetail().getPlaceId(), detail);
-                            }
-                        });
+                if(!alreadyFetchId.contains(result.getPlaceId())) {
+                    alreadyFetchId.add(result.getPlaceId());
+                    mediatorRestaurantDetail.addSource(
+                            placeDetailRepository.getDetailForRestaurantId(result.getPlaceId()),
+                            new Observer<Detail>() {
+                                @Override
+                                public void onChanged(Detail detail) {
+                                    Map<String, Detail> map = mediatorRestaurantDetail.getValue();
+                                    assert map != null;
+                                    map.put(detail.getResultDetail().getPlaceId(), detail);
+                                }
+                            });
 
+                }
                 restaurantInfos.add(map(location, result, null));
             } else {
 
