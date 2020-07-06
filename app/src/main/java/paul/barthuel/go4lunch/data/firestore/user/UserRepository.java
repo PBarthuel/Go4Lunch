@@ -14,16 +14,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import paul.barthuel.go4lunch.data.firestore.restaurant.dto.Uid;
 import paul.barthuel.go4lunch.data.firestore.user.dto.User;
 
 
 public class UserRepository {
 
-    private static final String USER_COLLECTION = "users";
-    private static final String PLACE_ID = "placeId";
+    private static final String USER_COLLECTION = "Users";
+    private static final String TODAY_USER_COLLECTION = "TodayUsers";
 
     // --- COLLECTION REFERENCE ---
 
@@ -31,11 +36,24 @@ public class UserRepository {
         return FirebaseFirestore.getInstance().collection(USER_COLLECTION);
     }
 
+    private CollectionReference getTodayUsersCollection() {
+        return FirebaseFirestore.getInstance()
+                .collection(LocalDate.now().toString() + TODAY_USER_COLLECTION);
+    }
+
     // --- CREATE ---
 
     public  Task<Void> createUser(String uid, String username, String urlPicture) {
         User userToCreate = new User(uid, username, urlPicture);
         return getUsersCollection().document(uid).set(userToCreate);
+    }
+
+    public Task<Void> addRestaurantToUser(String restaurantName, String uid) {
+        Map<String, String> value = new HashMap<>();
+        value.put("restaurantName", restaurantName);
+        return getTodayUsersCollection()
+                .document(uid)
+                .set(value);
     }
 
     // --- GET ---
@@ -55,7 +73,7 @@ public class UserRepository {
                 }
                 mutableLiveData.postValue(users);
             }
-        });
+    });
         return mutableLiveData;
     }
 

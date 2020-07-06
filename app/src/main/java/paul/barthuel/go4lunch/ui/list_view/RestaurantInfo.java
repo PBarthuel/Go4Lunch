@@ -6,9 +6,11 @@ public class RestaurantInfo {
     private String address;
     private String openingHours;
     private String distance;
-    private String rating;
+    private Double rating;
     private String image;
     private String id;
+    private String attendies;
+    private boolean isAttendiesVisible;
 
     public String getName() {
         return name;
@@ -26,7 +28,7 @@ public class RestaurantInfo {
         return distance;
     }
 
-    public String getRating() {
+    public Double getRating() {
         return rating;
     }
 
@@ -38,13 +40,22 @@ public class RestaurantInfo {
         return id;
     }
 
+    public String getAttendies( ) { return attendies; }
+
+    public boolean isAttendiesVisible() {
+        return isAttendiesVisible;
+    }
+
+
     public RestaurantInfo(String name,
                           String address,
                           String openingHours,
                           String distance,
-                          String rating,
+                          Double rating,
                           String image,
-                          String id) {
+                          String id,
+                          String attendies,
+                          boolean isAttendiesVisible) {
 
         this.name = name;
         this.address = address;
@@ -53,7 +64,8 @@ public class RestaurantInfo {
         this.rating = rating;
         this.image = image;
         this.id = id;
+        this.attendies = attendies;
+        this.isAttendiesVisible = isAttendiesVisible;
     }
-
 
 }

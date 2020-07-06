@@ -19,6 +19,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     signingConfigs {
         debug {
             storeFile file('../debug_key_store.jks')
@@ -55,7 +58,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
+
     testImplementation 'junit:junit:4.12'
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
@@ -67,4 +72,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.2'
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.3'
+    
+    // Helps mocking objects (Mockito.mock() or Mockito.spy())
+    testImplementation "org.mockito:mockito-core:2.28.2"
+
+    // Helps testing livedata : InstantTaskExecutorRule, for example
+    testImplementation "android.arch.core:core-testing:1.1.1"
+
 }

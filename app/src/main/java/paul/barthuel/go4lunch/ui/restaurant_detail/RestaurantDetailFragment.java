@@ -30,15 +30,17 @@ import paul.barthuel.go4lunch.injections.ViewModelFactory;
 public class RestaurantDetailFragment extends Fragment {
 
     private static final String KEY_ID = "KEY_ID";
+    private static final String KEY_RESTAURANT_NAME = "KEY_RESTAURANT_NAME";
     private RestaurantDetailViewModel mViewModel;
     private static final int REQUEST_CALL = 1;
     private TextView textViewCall;
     private RestaurantRepository mRestaurantRepository;
 
-    public static RestaurantDetailFragment newInstance(String id) {
+    public static RestaurantDetailFragment newInstance(String id, String restaurantName) {
 
         Bundle bundle = new Bundle();
         bundle.putString(KEY_ID, id);
+        bundle.putString(KEY_RESTAURANT_NAME, restaurantName);
 
         RestaurantDetailFragment fragment = new RestaurantDetailFragment();
         fragment.setArguments(bundle);
@@ -65,7 +67,7 @@ public class RestaurantDetailFragment extends Fragment {
         textViewCall = view.findViewById(R.id.content_scrolling_restaurant_detail_call_iv);
         TextView textViewLike = view.findViewById(R.id.content_scrolling_restaurant_detail_like_iv);
 
-        mViewModel.init(getArguments().getString(KEY_ID));
+        mViewModel.init(getArguments().getString(KEY_ID), getArguments().getString(KEY_RESTAURANT_NAME));
         mViewModel.getLiveDataResultDetail().observe(getViewLifecycleOwner(), new Observer<RestaurantDetailInfo>() {
             @Override
             public void onChanged(RestaurantDetailInfo restaurantDetailInfo) {
@@ -100,7 +102,7 @@ public class RestaurantDetailFragment extends Fragment {
         String phoneNumber = textViewCall.getTag().toString();
         if (phoneNumber.trim().length() > 0) {
             String dial = "tel:" + phoneNumber;
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(dial));
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(dial));
             PackageManager manager = requireContext().getPackageManager();
             List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
             if (infos.size() > 0) {

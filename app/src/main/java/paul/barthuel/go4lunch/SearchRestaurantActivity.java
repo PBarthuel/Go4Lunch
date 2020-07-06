@@ -32,6 +32,8 @@ public class SearchRestaurantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_restaurant);
 
+        //TODO faire la recherche la mais pour les données dans le fragment de chaque truc
+
         BottomNavigationView bottomNavView = findViewById(R.id.bottom_nav_view);
 
         Toolbar toolbar = findViewById(R.id.search_restaurant_toolbar);

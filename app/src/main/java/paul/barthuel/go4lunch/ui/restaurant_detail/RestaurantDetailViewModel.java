@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.threeten.bp.LocalDate;
@@ -24,13 +25,15 @@ public class RestaurantDetailViewModel extends ViewModel {
     private FirebaseAuth mAuth;
     private RestaurantRepository mRestaurantRepository;
     private UserRepository mUserRepository;
+    private String restaurantName;
 
 
-    public void init(String id) {
+    public void init(String id, String restaurantName) {
 
         Log.d("courgette",
                 "init() called with: id = [" + id + "]");
         this.id = id;
+        this.restaurantName = restaurantName;
 
         liveDataResultDetail = Transformations.map(
                 placeDetailRepository.getDetailForRestaurantId(id),
@@ -85,10 +88,15 @@ public class RestaurantDetailViewModel extends ViewModel {
 
     public void goToRestaurant() {
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getPhotoUrl() != null) {
-            mRestaurantRepository.deleteUserToRestaurant(mAuth.getCurrentUser().getUid());
-            mRestaurantRepository.addUserToRestaurant(id,
-                    mAuth.getCurrentUser().getUid());
-
+            mUserRepository.addRestaurantToUser(restaurantName, mAuth.getCurrentUser().getUid());
+            mRestaurantRepository.deleteUserToRestaurant(mAuth.getCurrentUser().getUid(),
+                    new RestaurantRepository.OnDeletedUserCallback() {
+                @Override
+                public void onUserDeleted() {
+                    mRestaurantRepository.addUserToRestaurant(id,
+                            mAuth.getCurrentUser().getUid());
+                }
+            });
         }
     }
 }

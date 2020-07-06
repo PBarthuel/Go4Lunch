@@ -1,5 +1,7 @@
 package paul.barthuel.go4lunch.ui.list_view;
 
+import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import paul.barthuel.go4lunch.R;
+import paul.barthuel.go4lunch.ui.custom_view.CustomRatingBar;
 
 public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, RestaurantInfoAdapter.ViewHolder> {
 
@@ -43,8 +46,10 @@ public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, Restauran
         private final TextView mTextViewAddress;
         private final TextView mTextViewOpeningHours;
         private final TextView mTextViewDistance;
+        private final TextView mTextViewAttendies;
         private final View mRoot;
         private final ImageView mImageViewThumbnail;
+        private final CustomRatingBar mCustomRatingBar;
 
 
 
@@ -55,8 +60,10 @@ public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, Restauran
             mTextViewAddress = itemView.findViewById(R.id.restaurant_description_item_address);
             mTextViewOpeningHours = itemView.findViewById(R.id.restaurant_description_item_schedule);
             mTextViewDistance = itemView.findViewById(R.id.restaurant_description_item_distance);
+            mTextViewAttendies = itemView.findViewById(R.id.restaurant_description_item_attendies);
             mRoot = itemView.findViewById(R.id.restaurant_description_item_cl);
             mImageViewThumbnail = itemView.findViewById(R.id.restaurant_description_item_iv_thumbnail);
+            mCustomRatingBar = itemView.findViewById(R.id.restaurant_description_item_crb_rating);
         }
 
         private void bind(final RestaurantInfo restaurantInfo, final Listener listener) {
@@ -65,6 +72,14 @@ public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, Restauran
             mTextViewAddress.setText(restaurantInfo.getAddress());
             mTextViewOpeningHours.setText(restaurantInfo.getOpeningHours());
             mTextViewDistance.setText(restaurantInfo.getDistance());
+            if (restaurantInfo.isAttendiesVisible()) {
+                mTextViewAttendies.setText(restaurantInfo.getAttendies());
+                mTextViewAttendies.setVisibility(View.VISIBLE);
+            }else {
+                mTextViewAttendies.setVisibility(View.INVISIBLE);
+            }
+            mCustomRatingBar.setStars(restaurantInfo.getRating());
+            Log.d("courgette", "bind: name " + restaurantInfo.getName() + "rating " + restaurantInfo.getRating());
             Glide.with(mImageViewThumbnail).load(restaurantInfo.getImage()).into(mImageViewThumbnail);
             mRoot.setOnClickListener(new View.OnClickListener() {
                 @Override

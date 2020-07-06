@@ -15,6 +15,7 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/workmates_item_tv_username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Courgette is joining (Le Courgette)"

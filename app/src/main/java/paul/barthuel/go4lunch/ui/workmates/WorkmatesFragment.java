@@ -4,21 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import paul.barthuel.go4lunch.R;
+import paul.barthuel.go4lunch.injections.ViewModelFactory;
 
 public class WorkmatesFragment extends Fragment {
 
-   private WorkmatesViewModel workmatesViewModel;
+   private WorkmatesViewModel mViewModel;
 
-    //TODO faire workMates en ajoutant la placeId du restaurant au utilisatur dans le repo
     public static WorkmatesFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -28,18 +30,27 @@ public class WorkmatesFragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(WorkmatesViewModel.class);
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        workmatesViewModel =
-                ViewModelProviders.of(this).get(WorkmatesViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_notifications, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-        /*workmatesViewModel.getText().observe(this, new Observer<String>() {
+        View view = inflater.inflate(R.layout.recycler_view_fragment, container, false);
+        RecyclerView recyclerView = view.findViewById(R.id.list_restaurant_recycler_view);
+
+        final WorkmatesAdapter adapter = new WorkmatesAdapter();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesInfo>>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onChanged(List<WorkmatesInfo> workmatesInfos) {
+                adapter.submitList(workmatesInfos);
             }
-        });*/
-        return root;
+        });
+
+        return view;
     }
 }

@@ -1,35 +1,44 @@
 package paul.barthuel.go4lunch.ui.workmates;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.firestore.user.dto.User;
-import paul.barthuel.go4lunch.data.model.nearby.Result;
 
 public class WorkmatesViewModel extends ViewModel {
 
-    private MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmates;
+    private MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmates =  new MediatorLiveData<>();
     private UserRepository mUserRepository;
 
     public WorkmatesViewModel(UserRepository userRepository) {
 
         this.mUserRepository = userRepository;
+
+        mediatorLiveDataWorkmates.addSource(mUserRepository.getAllUsers(), new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> users) {
+                mediatorLiveDataWorkmates.setValue(map(users));
+            }
+        });
     }
 
-    private WorkmatesInfo map(User user) {
+    private List<WorkmatesInfo> map(List<User> users) {
 
-        String name = user.getUsername();
-        String image = user.getUrlPicture();
+        List<WorkmatesInfo> workmatesInfos = new ArrayList<>();
 
-        return new WorkmatesInfo(name, image);
+        for (User user : users) {
+            String name = user.getUsername();
+            String image = user.getUrlPicture();
+            workmatesInfos.add(new WorkmatesInfo(name, image));
+        }
+
+        return workmatesInfos;
     }
 
     LiveData<List<WorkmatesInfo>> getUiModelsLiveData() {

@@ -36,7 +36,6 @@ public class ListViewFragment extends Fragment implements RestaurantInfoAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(ListViewViewModel.class);
-
     }
 
     @Nullable
@@ -60,6 +59,6 @@ public class ListViewFragment extends Fragment implements RestaurantInfoAdapter.
 
     @Override
     public void onRestaurantInfoClick(RestaurantInfo restaurantInfo) {
-        startActivity(RestaurantDetailActivity.navigate(requireContext(), restaurantInfo.getId()));
+        startActivity(RestaurantDetailActivity.navigate(requireContext(), restaurantInfo.getId(), restaurantInfo.getName()));
     }
 }

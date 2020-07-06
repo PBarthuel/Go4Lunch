@@ -1,5 +1,6 @@
 package paul.barthuel.go4lunch.ui.workmates;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,41 +8,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-
-import java.util.List;
+import com.bumptech.glide.request.RequestOptions;
 
 import paul.barthuel.go4lunch.R;
 
-public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.ViewHolder>  {
+public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapter.ViewHolder> {
 
-    private List<WorkmatesInfo> mList;
+    protected WorkmatesAdapter() {
+        super(new WorkmatesInfoDiffCallBack());
+    }
 
     @NonNull
     @Override
-    public WorkmatesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.restaurant_description_item, viewGroup, false);
+                .inflate(R.layout.workmates_item, viewGroup, false);
 
-        return new WorkmatesAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WorkmatesAdapter.ViewHolder viewHolder, int index) {
-
-        viewHolder.bind(mList.get(index));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mList == null ? 0 : mList.size();
-    }
-
-    public void setNewData(List<WorkmatesInfo> list) {
-        mList = list;
-        notifyDataSetChanged();
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int index) {
+        viewHolder.bind(getItem(index));
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,14 +44,17 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.View
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mTextViewName = itemView.findViewById(R.id.restaurant_description_item_tv_name);
-            mImageViewThumbnail = itemView.findViewById(R.id.restaurant_description_item_iv_thumbnail);
+            mTextViewName = itemView.findViewById(R.id.workmates_item_tv_username);
+            mImageViewThumbnail = itemView.findViewById(R.id.workmates_item_iv_thumbnail);
         }
 
         private void bind(final WorkmatesInfo workmatesInfo) {
 
             mTextViewName.setText(workmatesInfo.getName());
-            Glide.with(mImageViewThumbnail).load(workmatesInfo.getImage()).into(mImageViewThumbnail);
+            Glide.with(mImageViewThumbnail)
+                    .load(workmatesInfo.getImage())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mImageViewThumbnail);
         }
     }
 }

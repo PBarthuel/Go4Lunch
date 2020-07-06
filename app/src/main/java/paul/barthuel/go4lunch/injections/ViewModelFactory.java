@@ -13,6 +13,7 @@ import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
 import paul.barthuel.go4lunch.ui.list_view.ListViewViewModel;
+import paul.barthuel.go4lunch.ui.list_view.UriBuilder;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationViewModel;
 import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailViewModel;
 import paul.barthuel.go4lunch.ui.workmates.WorkmatesViewModel;
@@ -77,7 +78,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new ListViewViewModel(
                     actualLocationRepository,
                     nearbyRepository,
-                    placeDetailRepository);
+                    placeDetailRepository,
+                    restaurantRepository,
+                    new UriBuilder());
         }else if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)) {
             return (T) new RestaurantDetailViewModel(
                     placeDetailRepository,

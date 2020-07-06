@@ -13,9 +13,6 @@ public class Result {
     @SerializedName("icon")
     @Expose
     private String icon;
-    @SerializedName("id")
-    @Expose
-    private String id;
     @SerializedName("name")
     @Expose
     private String name;
@@ -37,6 +34,9 @@ public class Result {
     @SerializedName("vicinity")
     @Expose
     private String vicinity;
+    @SerializedName("rating")
+    @Expose
+    private Double rating;
 
     public Geometry getGeometry() {
         return geometry;
@@ -52,14 +52,6 @@ public class Result {
 
     public void setIcon(String icon) {
         this.icon = icon;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -116,6 +108,14 @@ public class Result {
 
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 
 }

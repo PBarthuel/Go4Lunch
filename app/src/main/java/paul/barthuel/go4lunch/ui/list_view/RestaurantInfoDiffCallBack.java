@@ -14,7 +14,8 @@ class RestaurantInfoDiffCallBack extends androidx.recyclerview.widget.DiffUtil.I
         return oldItem.getName().equals(newItem.getName())
                 && oldItem.getAddress().equals(newItem.getAddress())
                 && oldItem.getDistance().equals(newItem.getDistance())
-                //&& oldItem.getOpeningHours().equals(newItem.getOpeningHours())
-                && oldItem.getImage().equals(newItem.getImage());
+                && oldItem.getAttendies().equals(newItem.getAttendies())
+                && oldItem.getOpeningHours() != null
+                && oldItem.getOpeningHours().equals(newItem.getOpeningHours());
     }
 }
