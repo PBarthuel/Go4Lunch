@@ -8,10 +8,12 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import paul.barthuel.go4lunch.ActualLocationRepository;
 import paul.barthuel.go4lunch.MainViewModel;
+import paul.barthuel.go4lunch.data.firestore.chat.ChatRepository;
 import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
+import paul.barthuel.go4lunch.ui.chat.ChatViewModel;
 import paul.barthuel.go4lunch.ui.list_view.ListViewViewModel;
 import paul.barthuel.go4lunch.ui.list_view.UriBuilder;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationViewModel;
@@ -32,19 +34,23 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private UserRepository userRepository;
     @NonNull
     private RestaurantRepository restaurantRepository;
+    @NonNull
+    private ChatRepository chatRepository;
 
     private ViewModelFactory(
             @NonNull ActualLocationRepository actualLocationRepository,
             @NonNull NearbyRepository nearbyRepository,
             @NonNull PlaceDetailRepository placeDetailRepository,
             @NonNull UserRepository userRepository,
-            @NonNull RestaurantRepository restaurantRepository
+            @NonNull RestaurantRepository restaurantRepository,
+            @NonNull ChatRepository chatRepository
     ) {
         this.actualLocationRepository = actualLocationRepository;
         this.nearbyRepository = nearbyRepository;
         this.placeDetailRepository = placeDetailRepository;
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
+        this.chatRepository = chatRepository;
     }
 
     public static ViewModelFactory getInstance() {
@@ -56,7 +62,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                             new NearbyRepository(),
                             new PlaceDetailRepository(),
                             new UserRepository(),
-                            new RestaurantRepository()
+                            new RestaurantRepository(),
+                            new ChatRepository()
                     );
                 }
             }
@@ -72,8 +79,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(LocalisationViewModel.class)) {
             return (T) new LocalisationViewModel(
                     actualLocationRepository,
-                    nearbyRepository
-            );
+                    nearbyRepository);
         }else if (modelClass.isAssignableFrom(ListViewViewModel.class)) {
             return (T) new ListViewViewModel(
                     actualLocationRepository,
@@ -92,6 +98,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     userRepository);
         }else if (modelClass.isAssignableFrom(WorkmatesViewModel.class)) {
             return (T)new WorkmatesViewModel(userRepository);
+        }else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
+            return (T)new ChatViewModel(chatRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

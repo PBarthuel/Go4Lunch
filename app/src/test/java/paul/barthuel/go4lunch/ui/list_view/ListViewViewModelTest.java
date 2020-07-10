@@ -16,12 +16,13 @@ import java.util.List;
 
 import paul.barthuel.go4lunch.ActualLocationRepository;
 import paul.barthuel.go4lunch.LiveDataTestUtil;
+import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
 import paul.barthuel.go4lunch.data.model.detail.Detail;
-import paul.barthuel.go4lunch.data.model.nearby.Photo;
 import paul.barthuel.go4lunch.data.model.detail.ResultDetail;
 import paul.barthuel.go4lunch.data.model.nearby.Geometry;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyLocation;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
+import paul.barthuel.go4lunch.data.model.nearby.Photo;
 import paul.barthuel.go4lunch.data.model.nearby.Result;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
@@ -43,12 +44,16 @@ public class ListViewViewModelTest {
     private MutableLiveData<NearbyResponse> nearbyReponseLiveData;
     private MutableLiveData<Detail> detailLiveData;
     private MutableLiveData<Location> locationLiveData;
+    private MutableLiveData<Integer> attendiesLiveData;
 
     @Mock
     ActualLocationRepository actualLocationRepository;
 
     @Mock
     NearbyRepository nearbyRepository;
+
+    @Mock
+    RestaurantRepository restaurantRepository;
 
     @Mock
     PlaceDetailRepository placeDetailRepository;
@@ -62,18 +67,25 @@ public class ListViewViewModelTest {
     public void setup() {
         actualLocationRepository = Mockito.mock(ActualLocationRepository.class);
         nearbyRepository = Mockito.mock(NearbyRepository.class);
+        restaurantRepository = Mockito.mock(RestaurantRepository.class);
         placeDetailRepository = Mockito.mock(PlaceDetailRepository.class);
         uriBuilder = Mockito.mock(UriBuilder.class);
 
         nearbyReponseLiveData = new MutableLiveData<>();
         detailLiveData = new MutableLiveData<>();
         locationLiveData = new MutableLiveData<>();
+        attendiesLiveData = new MutableLiveData<>();
 
         Mockito.doReturn(locationLiveData).when(actualLocationRepository).getLocationLiveData();
         Mockito.doReturn(nearbyReponseLiveData).when(nearbyRepository).getNearbyForLocation(any());
         Mockito.doReturn(detailLiveData).when(placeDetailRepository).getDetailForRestaurantId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
+        Mockito.doReturn(attendiesLiveData).when(restaurantRepository).getRestaurantAttendies("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
 
-        listViewViewModel = new ListViewViewModel(actualLocationRepository, nearbyRepository, placeDetailRepository, uriBuilder);
+        listViewViewModel = new ListViewViewModel(actualLocationRepository,
+                nearbyRepository,
+                placeDetailRepository,
+                restaurantRepository,
+                uriBuilder);
     }
 
     @Test
@@ -85,6 +97,9 @@ public class ListViewViewModelTest {
         Detail detail = getRestaurantDetail();
         detailLiveData.setValue(detail);
 
+        Integer attendies = 1;
+        attendiesLiveData.setValue(attendies);
+
         Location location = new Location("");
         location.setLatitude(48.85838489);
         location.setLongitude(2.350088);
@@ -92,14 +107,18 @@ public class ListViewViewModelTest {
 
         Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
-        // When
+        //When
         List<RestaurantInfo> restaurantInfos = LiveDataTestUtil.getOrAwaitValue(listViewViewModel.getUiModelsLiveData());
 
-        // Then
+        //Then
         assertEquals(1, restaurantInfos.size());
         assertEquals("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", restaurantInfos.get(0).getId());
         assertEquals("Benoit Paris", restaurantInfos.get(0).getName());
         assertEquals("courgette", restaurantInfos.get(0).getImage());
+        assertEquals("20 Rue Saint-Martin, Paris", restaurantInfos.get(0).getAddress());
+        assertEquals(new Double(2.00), restaurantInfos.get(0).getRating());
+        assertEquals("5437222m", restaurantInfos.get(0).getDistance());
+        assertEquals("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", restaurantInfos.get(0).getId());
     }
 
     private Detail getRestaurantDetail() {
@@ -119,7 +138,7 @@ public class ListViewViewModelTest {
         result.setName("Benoit Paris");
         result.setPlaceId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
         result.setVicinity("20 Rue Saint-Martin, Paris");
-        result.setRating(4.1);
+        result.setRating(2.00);
 
         Geometry geometry = getGeometry();
         result.setGeometry(geometry);

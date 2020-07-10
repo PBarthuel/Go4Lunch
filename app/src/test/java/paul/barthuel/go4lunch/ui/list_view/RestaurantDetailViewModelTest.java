@@ -59,7 +59,7 @@ public class RestaurantDetailViewModelTest {
         Mockito.doReturn(nearbyReponseLiveData).when(nearbyRepository).getNearbyForLocation(any());
         Mockito.doReturn(detailLiveData).when(placeDetailRepository).getDetailForRestaurantId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
 
-        listViewViewModel = new ListViewViewModel(actualLocationRepository, nearbyRepository, placeDetailRepository, uriBuilder);
+        //listViewViewModel = new ListViewViewModel(actualLocationRepository, nearbyRepository, placeDetailRepository, uriBuilder);
     }
 
     @Test
