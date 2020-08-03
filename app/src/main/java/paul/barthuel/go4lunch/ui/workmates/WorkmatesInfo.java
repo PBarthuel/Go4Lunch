@@ -6,6 +6,7 @@ public class WorkmatesInfo {
 
     private String name;
     private String image;
+    private String id;
 
     public String getName() {
         return name;
@@ -13,10 +14,14 @@ public class WorkmatesInfo {
 
     public String getImage() { return image; }
 
+    public String getId() { return id; }
+
     public WorkmatesInfo(String name,
-                         String image) {
+                         String image,
+                         String id) {
         this.name = name;
         this.image = image;
+        this.id = id;
     }
 
     @Override
@@ -25,11 +30,12 @@ public class WorkmatesInfo {
         if (o == null || getClass() != o.getClass()) return false;
         WorkmatesInfo that = (WorkmatesInfo) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(image, that.image);
+                Objects.equals(image, that.image)&&
+                Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, image);
+        return Objects.hash(name, image, id);
     }
 }

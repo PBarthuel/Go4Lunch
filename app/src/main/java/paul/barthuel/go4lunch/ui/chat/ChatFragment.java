@@ -5,6 +5,8 @@ import android.view.FrameMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +28,16 @@ import paul.barthuel.go4lunch.ui.list_view.RestaurantInfoAdapter;
 public class ChatFragment extends Fragment {
 
     private ChatViewModel mViewModel;
+    private static final String KEY_WORKMATE_ID = "KEY_WORKMATE_ID";
 
-    public static ChatFragment newInstance() {
+    public static ChatFragment newInstance(String workmateId) {
 
-        Bundle args = new Bundle();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_WORKMATE_ID, workmateId);
 
         ChatFragment fragment = new ChatFragment();
-        fragment.setArguments(args);
+        fragment.setArguments(bundle);
+
         return fragment;
     }
 
@@ -40,6 +45,7 @@ public class ChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(ChatViewModel.class);
+        mViewModel.init(getArguments().getString(KEY_WORKMATE_ID));
     }
 
     @Nullable
@@ -47,7 +53,26 @@ public class ChatFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
+        ChatAdapter chatAdapter = new ChatAdapter();
 
+        RecyclerView recyclerView = view.findViewById(R.id.chat_rv);
+        EditText editText = view.findViewById(R.id.chat_et);
+        Button button = view.findViewById(R.id.chat_btn);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(chatAdapter);
+        mViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), new Observer<List<UiMessage>>() {
+            @Override
+            public void onChanged(List<UiMessage> uiMessages) {
+                chatAdapter.setNewData(uiMessages);
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.sendMessage(editText.getText().toString());
+            }
+        });
 
         return view;
     }

@@ -1,6 +1,5 @@
 package paul.barthuel.go4lunch.ui.list_view;
 
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

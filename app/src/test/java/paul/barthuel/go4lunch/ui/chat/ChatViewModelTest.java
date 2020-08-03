@@ -1,17 +1,15 @@
-package paul.barthuel.go4lunch.ui.list_view;
+package paul.barthuel.go4lunch.ui.chat;
 
-import androidx.annotation.NonNull;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.threeten.bp.Clock;
 import org.threeten.bp.LocalDateTime;
 
 import java.util.List;
@@ -19,8 +17,6 @@ import java.util.List;
 import paul.barthuel.go4lunch.LiveDataTestUtil;
 import paul.barthuel.go4lunch.data.firestore.chat.ChatRepository;
 import paul.barthuel.go4lunch.data.firestore.chat.dto.Message;
-import paul.barthuel.go4lunch.ui.chat.ChatViewModel;
-import paul.barthuel.go4lunch.ui.chat.UiMessage;
 
 public class ChatViewModelTest {
 
@@ -46,21 +42,23 @@ public class ChatViewModelTest {
         chatViewModel = new ChatViewModel(chatRepository);
     }
 
-    @Test
+    /*@Test
     public void shouldShowTheDateLikeHHmmIfTheDayStoredIsToday() throws InterruptedException {
         //Given
         Message message = getMessage();
         messagesLiveData.setValue(message);
 
         //When
-        List<UiMessage> messages = LiveDataTestUtil.getOrAwaitValue(chatViewModel)
+        List<UiMessage> messages = LiveDataTestUtil.getOrAwaitValue(chatViewModel.getUiModelsLiveData());
+
         //Then
-    }
+        Assert.assertEquals("'à '18:27", messages.get(0).getDate());
+    }*/
 
     public Message getMessage() {
         return new Message("courgette",
                 "Inu2tJ6JZMb1sBvbOlFLk0zGlx53",
                 "P8orHCZjywakkaE1LzkV5r7bYnH3",
-                LocalDateTime.now());
+                null);
     }
 }

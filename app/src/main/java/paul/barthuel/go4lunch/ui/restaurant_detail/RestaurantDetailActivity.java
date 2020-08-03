@@ -30,7 +30,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, RestaurantDetailFragment.newInstance(id, restaurantName))
+                    .replace(R.id.restaurant_detail_container, RestaurantDetailFragment.newInstance(id, restaurantName))
                     .commitNow();
         }
     }

@@ -1,17 +1,20 @@
 package paul.barthuel.go4lunch.ui.chat;
 
-import androidx.arch.core.util.Function;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
@@ -24,36 +27,53 @@ public class ChatViewModel extends ViewModel {
 
     private final ChatRepository chatRepository;
 
-    private LiveData<List<UiMessage>> liveDataMessages = new MediatorLiveData<>();
+    private MediatorLiveData<List<UiMessage>> liveDataMessages = new MediatorLiveData<>();
+    private String workmateId;
 
     LiveData<List<UiMessage>> getUiModelsLiveData() {
         return liveDataMessages;
     }
 
-    public ChatViewModel(final ChatRepository chatRepository) {
+    public void init(String workmateId) {
 
-        this.chatRepository = chatRepository;
+        Log.d("courgette",
+                "init() called with: wormateId = [" + workmateId + "]");
+        this.workmateId = workmateId;
 
-        liveDataMessages = Transformations.map(chatRepository.getChatForUsers(FirebaseAuth.getInstance().getCurrentUser().getUid(), "courgette"),
-                new Function<List<Message>, List<UiMessage>>() {
+        liveDataMessages.addSource(chatRepository.getChatForUsers(FirebaseAuth.getInstance().getCurrentUser().getUid(), workmateId),
+                new Observer<List<Message>>() {
                     @Override
-                    public List<UiMessage> apply(List<Message> messages) {
-
+                    public void onChanged(List<Message> messages) {
                         List<UiMessage> uiMessages = new ArrayList<>(messages.size());
                         for (Message message : messages) {
                             String formattedDate;
-                            if (LocalDate.now().equals(message.getDate().toLocalDate())) {
-                                formattedDate = message.getDate().format(DateTimeFormatter.ofPattern("'à 'HH:mm"));
+                            LocalDateTime messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(message.getEpoch()), ZoneId.of("Europe/Paris"));
+                            if (LocalDate.now().equals(messageDate.toLocalDate())) {
+                                formattedDate = messageDate.format(DateTimeFormatter.ofPattern("'à 'HH:mm"));
                             } else {
-                                formattedDate = message.getDate().format(DateTimeFormatter.ofPattern("'le 'dd/MM' à 'HH:mm"));
+                                formattedDate = messageDate.format(DateTimeFormatter.ofPattern("'le 'dd/MM' à 'HH:mm"));
                             }
                             uiMessages.add(new UiMessage(message.getText(),
                                     formattedDate,
                                     message.getSenderName(),
                                     message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())));
                         }
-                        return uiMessages;
+                        liveDataMessages.setValue(uiMessages);
                     }
                 });
+    }
+
+    public ChatViewModel(final ChatRepository chatRepository) {
+
+        this.chatRepository = chatRepository;
+
+    }
+
+    public void sendMessage(String message) {
+        chatRepository.createChatMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                workmateId,
+                FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                ZonedDateTime.now().toInstant().toEpochMilli(),
+                message);
     }
 }

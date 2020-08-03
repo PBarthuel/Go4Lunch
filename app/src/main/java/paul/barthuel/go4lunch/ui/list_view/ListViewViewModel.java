@@ -123,45 +123,47 @@ public class ListViewViewModel extends ViewModel {
 
         List<RestaurantInfo> restaurantInfos = new ArrayList<>();
 
-        for (Result result : nearbyResponse.getResults()) {
-            Detail detail = restaurantDetailMap.get(result.getPlaceId());
-            if (detail == null) {
-                if(!alreadyFetchId.contains(result.getPlaceId())) {
-                    Log.d("courgette", "combineNearbyAndDetails: fetching restaurant detail" + result.getPlaceId());
-                    alreadyFetchId.add(result.getPlaceId());
-                    mediatorRestaurantDetail.addSource(
-                            placeDetailRepository.getDetailForRestaurantId(result.getPlaceId()),
-                            new Observer<Detail>() {
-                                @Override
-                                public void onChanged(Detail detail) {
-                                    Map<String, Detail> map = mediatorRestaurantDetail.getValue();
-                                    assert map != null;
-                                    map.put(detail.getResultDetail().getPlaceId(), detail);
-                                    Log.d("courgette", "combineNearbyAndDetails: fetched restaurant detail" + result.getPlaceId());
-                                }
-                            });
+        if (nearbyResponse.getResults() != null) {
+            for (Result result : nearbyResponse.getResults()) {
+                Detail detail = restaurantDetailMap.get(result.getPlaceId());
+                if (detail == null) {
+                    if (!alreadyFetchId.contains(result.getPlaceId())) {
+                        Log.d("courgette", "combineNearbyAndDetails: fetching restaurant detail" + result.getPlaceId());
+                        alreadyFetchId.add(result.getPlaceId());
+                        mediatorRestaurantDetail.addSource(
+                                placeDetailRepository.getDetailForRestaurantId(result.getPlaceId()),
+                                new Observer<Detail>() {
+                                    @Override
+                                    public void onChanged(Detail detail) {
+                                        Map<String, Detail> map = mediatorRestaurantDetail.getValue();
+                                        assert map != null;
+                                        map.put(detail.getResultDetail().getPlaceId(), detail);
+                                        Log.d("courgette", "combineNearbyAndDetails: fetched restaurant detail" + result.getPlaceId());
+                                    }
+                                });
 
+                    }
                 }
-            }
-            Integer attendies = restaurantAttendies.get(result.getPlaceId());
-            if (attendies == null) {
-                if(!alreadyFetchIdForAttendies.contains(result.getPlaceId())) {
-                    Log.d("courgette", "combineNearbyAndDetails: fetching restaurant attendies" + result.getPlaceId());
-                    alreadyFetchIdForAttendies.add(result.getPlaceId());
-                    mediatorRestaurantAttendies.addSource(
-                            restaurantRepository.getRestaurantAttendies(result.getPlaceId()),
-                            new Observer<Integer>() {
-                        @Override
-                        public void onChanged(Integer attendies) {
-                            Map<String, Integer> map = mediatorRestaurantAttendies.getValue();
-                            assert map != null;
-                            map.put(result.getPlaceId(), attendies);
-                            Log.d("courgette", "combineNearbyAndDetails: fetched restaurant attendies" + result.getPlaceId());
-                        }
-                    });
+                Integer attendies = restaurantAttendies.get(result.getPlaceId());
+                if (attendies == null) {
+                    if (!alreadyFetchIdForAttendies.contains(result.getPlaceId())) {
+                        Log.d("courgette", "combineNearbyAndDetails: fetching restaurant attendies" + result.getPlaceId());
+                        alreadyFetchIdForAttendies.add(result.getPlaceId());
+                        mediatorRestaurantAttendies.addSource(
+                                restaurantRepository.getRestaurantAttendies(result.getPlaceId()),
+                                new Observer<Integer>() {
+                                    @Override
+                                    public void onChanged(Integer attendies) {
+                                        Map<String, Integer> map = mediatorRestaurantAttendies.getValue();
+                                        assert map != null;
+                                        map.put(result.getPlaceId(), attendies);
+                                        Log.d("courgette", "combineNearbyAndDetails: fetched restaurant attendies" + result.getPlaceId());
+                                    }
+                                });
+                    }
                 }
+                restaurantInfos.add(map(location, result, detail, attendies));
             }
-            restaurantInfos.add(map(location, result, detail, attendies));
         }
         mediatorRestaurantInfo.setValue(restaurantInfos);
     }
@@ -185,7 +187,6 @@ public class ListViewViewModel extends ViewModel {
                 openingHours = "unknown";
             } else {
                 periods = detail.getResultDetail().getOpeningHours().getPeriods();
-                //TODO algo pour opening hours finir
                 for (int i = 0; i < periods.size(); i++) {
                     period = periods.get(i);
 
@@ -221,11 +222,11 @@ public class ListViewViewModel extends ViewModel {
                 location.getLongitude()) + "m";
 
         Double rating = (result.getRating() * 3) / 5;
-        if(rating >= 2.50) {
+        if (rating >= 2.50) {
             rating = 3.00;
-        }else if(rating < 2.50 && rating >= 1.50){
+        } else if (rating < 2.50 && rating >= 1.50) {
             rating = 2.00;
-        }else {
+        } else {
             rating = 1.00;
         }
 
@@ -244,12 +245,12 @@ public class ListViewViewModel extends ViewModel {
 
         String id = result.getPlaceId();
 
-        String attendiesAsAString = attendies==null?"?":String.valueOf(attendies);
+        String attendiesAsAString = attendies == null ? "?" : String.valueOf(attendies);
 
         boolean isAttendiesVisible;
         if (attendies == null || attendies == 0) {
             isAttendiesVisible = false;
-        }else {
+        } else {
             isAttendiesVisible = true;
         }
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_message_gl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <ImageView
+        android:id="@+id/right_message_bubble"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/sender_message_shape"
+        app:layout_constraintBottom_toBottomOf="@id/right_message_tv"
+        app:layout_constraintLeft_toLeftOf="@id/right_message_tv"
+        app:layout_constraintRight_toRightOf="@id/right_message_tv"
+        app:layout_constraintTop_toTopOf="@id/right_message_tv" />
+
+    <TextView
+        android:id="@+id/right_message_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintLeft_toLeftOf="@id/right_message_gl"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Courgette, courgette,Courgette, courgette,Courgette, courgette" />
+
+    <TextView
+        android:id="@+id/right_date_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/right_message_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="20/10/2020"
+        android:paddingRight="16dp"
+        android:paddingEnd="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

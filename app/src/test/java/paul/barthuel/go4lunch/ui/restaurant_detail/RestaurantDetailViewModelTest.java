@@ -1,4 +1,4 @@
-package paul.barthuel.go4lunch.ui.list_view;
+package paul.barthuel.go4lunch.ui.restaurant_detail;
 
 import android.location.Location;
 
@@ -16,6 +16,8 @@ import paul.barthuel.go4lunch.data.model.detail.Detail;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
+import paul.barthuel.go4lunch.ui.list_view.ListViewViewModel;
+import paul.barthuel.go4lunch.ui.list_view.UriBuilder;
 
 import static org.mockito.ArgumentMatchers.any;
 

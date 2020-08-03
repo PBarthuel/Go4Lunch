@@ -16,8 +16,9 @@ import java.util.List;
 
 import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
+import paul.barthuel.go4lunch.ui.chat.ChatActivity;
 
-public class WorkmatesFragment extends Fragment {
+public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.Listener {
 
    private WorkmatesViewModel mViewModel;
 
@@ -41,7 +42,7 @@ public class WorkmatesFragment extends Fragment {
         View view = inflater.inflate(R.layout.recycler_view_fragment, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.list_restaurant_recycler_view);
 
-        final WorkmatesAdapter adapter = new WorkmatesAdapter();
+        final WorkmatesAdapter adapter = new WorkmatesAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         mViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesInfo>>() {
@@ -52,5 +53,10 @@ public class WorkmatesFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onWorkmateInfoClick(WorkmatesInfo workmatesInfo) {
+        startActivity(ChatActivity.navigate(requireContext(), workmatesInfo.getId()));
     }
 }

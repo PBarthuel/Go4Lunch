@@ -13,7 +13,7 @@ import paul.barthuel.go4lunch.data.firestore.user.dto.User;
 
 public class WorkmatesViewModel extends ViewModel {
 
-    private MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmates =  new MediatorLiveData<>();
+    private MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmates = new MediatorLiveData<>();
     private UserRepository mUserRepository;
 
     public WorkmatesViewModel(UserRepository userRepository) {
@@ -33,9 +33,11 @@ public class WorkmatesViewModel extends ViewModel {
         List<WorkmatesInfo> workmatesInfos = new ArrayList<>();
 
         for (User user : users) {
+            if (user.getUid() ==)
             String name = user.getUsername();
             String image = user.getUrlPicture();
-            workmatesInfos.add(new WorkmatesInfo(name, image));
+            String id = user.getUid();
+            workmatesInfos.add(new WorkmatesInfo(name, image, id));
         }
 
         return workmatesInfos;
@@ -44,5 +46,4 @@ public class WorkmatesViewModel extends ViewModel {
     LiveData<List<WorkmatesInfo>> getUiModelsLiveData() {
         return mediatorLiveDataWorkmates;
     }
-
 }

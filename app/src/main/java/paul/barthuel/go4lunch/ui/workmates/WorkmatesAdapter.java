@@ -1,6 +1,5 @@
 package paul.barthuel.go4lunch.ui.workmates;
 
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +17,11 @@ import paul.barthuel.go4lunch.R;
 
 public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapter.ViewHolder> {
 
-    protected WorkmatesAdapter() {
+    private Listener listener;
+
+    protected WorkmatesAdapter(Listener listener) {
         super(new WorkmatesInfoDiffCallBack());
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,28 +35,40 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int index) {
-        viewHolder.bind(getItem(index));
+        viewHolder.bind(getItem(index), listener);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView mTextViewName;
         private final ImageView mImageViewThumbnail;
+        private final View mRoot;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mTextViewName = itemView.findViewById(R.id.workmates_item_tv_username);
             mImageViewThumbnail = itemView.findViewById(R.id.workmates_item_iv_thumbnail);
+            mRoot = itemView.findViewById(R.id.workmates_item_cl);
         }
 
-        private void bind(final WorkmatesInfo workmatesInfo) {
+        private void bind(final WorkmatesInfo workmatesInfo, final Listener listener) {
 
             mTextViewName.setText(workmatesInfo.getName());
             Glide.with(mImageViewThumbnail)
                     .load(workmatesInfo.getImage())
                     .apply(RequestOptions.circleCropTransform())
                     .into(mImageViewThumbnail);
+            mRoot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onWorkmateInfoClick(workmatesInfo);
+                }
+            });
         }
+    }
+
+    public interface Listener {
+        void onWorkmateInfoClick(WorkmatesInfo workmatesInfo);
     }
 }
