@@ -22,15 +22,19 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.threeten.bp.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import paul.barthuel.go4lunch.data.firestore.restaurant.dto.Uid;
+import paul.barthuel.go4lunch.data.firestore.user.dto.User;
 
 public class RestaurantRepository {
 
     private static final String RESTAURANT_COLLECTION = "restaurants";
     private static final String USERS_TO_RESTAURANT_COLLECTION = "usersToRestaurant";
+    private static final String KEY_RESTAURANT_NAME = "restaurantName";
 
     // --- COLLECTION REFERENCE ---
 
@@ -46,20 +50,21 @@ public class RestaurantRepository {
 
     // --- CREATE ---
 
-    public Task<Void> addUserToRestaurant(String placeId, String uid) {
-        Uid userId = new Uid(uid);
-        return getRestaurantsCollection()
+    public void addUserToRestaurant(String placeId, String restaurantName, String uid, String workmateName) {
+        Uid userId = new Uid(uid, workmateName);
+        getRestaurantsCollection()
                 .document(placeId)
                 .collection(USERS_TO_RESTAURANT_COLLECTION)
                 .document(uid)
                 .set(userId);
+        Map<String, String> restaurantNameMap = new HashMap<>();
+        restaurantNameMap.put(KEY_RESTAURANT_NAME, restaurantName);
+        getRestaurantsCollection()
+                .document(placeId)
+                .set(restaurantNameMap);
     }
 
     // --- GET ---
-
-    public Task<DocumentSnapshot> getRestaurant(String placeId) {
-        return getRestaurantsCollection().document(placeId).get();
-    }
 
     public LiveData<Integer> getRestaurantAttendies(String placeId) {
         MutableLiveData<Integer> liveData = new MutableLiveData<>();
@@ -75,29 +80,47 @@ public class RestaurantRepository {
         return liveData;
     }
 
+    public LiveData<List<Uid>> getUidsFromRestaurant(String placeId) {
+        MutableLiveData<List<Uid>> liveData = new MutableLiveData<>();
+        getRestaurantsCollection().document(placeId).collection("usersToRestaurant").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    List<Uid> uids = new ArrayList<>();
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        Uid uid = document.toObject(Uid.class);
+                        uids.add(uid);
+                    }
+                    liveData.postValue(uids);
+                }
+            }
+        });
+        return liveData;
+    }
+
     // --- DELETE ---
 
     public void deleteUserToRestaurant(String uid, OnDeletedUserCallback onDeletedUserCallback) {
         getUserstoRestaurantCollection().whereEqualTo("uid", uid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    List<Task<Void>> deleteTasks = new ArrayList<>();
-                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                        Log.d("courgette", "onComplete: " + queryDocumentSnapshot.toString());
-                        deleteTasks.add(queryDocumentSnapshot.getReference().delete());
-                    }
-                    Tasks.whenAllComplete(deleteTasks).addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
-                        @Override
-                        public void onComplete(@NonNull Task<List<Task<?>>> task) {
-                            onDeletedUserCallback.onUserDeleted();
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Task<Void>> deleteTasks = new ArrayList<>();
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                Log.d("courgette", "onComplete: " + queryDocumentSnapshot.toString());
+                                deleteTasks.add(queryDocumentSnapshot.getReference().delete());
+                            }
+                            Tasks.whenAllComplete(deleteTasks).addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+                                @Override
+                                public void onComplete(@NonNull Task<List<Task<?>>> task) {
+                                    onDeletedUserCallback.onUserDeleted();
+                                }
+                            });
                         }
-                    });
-                }
-            }
-        });
+                    }
+                });
     }
 
     public interface OnDeletedUserCallback {

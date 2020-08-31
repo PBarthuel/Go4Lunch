@@ -52,7 +52,7 @@ public class ListViewViewModel extends ViewModel {
         return mediatorRestaurantInfo;
     }
 
-    public ListViewViewModel(final ActualLocationRepository repository,
+    public ListViewViewModel(final ActualLocationRepository actualLocationRepository,
                              final NearbyRepository nearbyRepository,
                              final PlaceDetailRepository placeDetailRepository,
                              final RestaurantRepository restaurantRepository,
@@ -61,12 +61,12 @@ public class ListViewViewModel extends ViewModel {
         mediatorRestaurantDetail.setValue(new HashMap<String, Detail>());
         mediatorRestaurantAttendies.setValue(new HashMap<String, Integer>());
         this.placeDetailRepository = placeDetailRepository;
-        this.actualLocationRepository = repository;
+        this.actualLocationRepository = actualLocationRepository;
         this.restaurantRepository = restaurantRepository;
         this.uriBuilder = uriBuilder;
 
         liveDataNearby = Transformations.switchMap(
-                repository.getLocationLiveData(),
+                actualLocationRepository.getLocationLiveData(),
                 new Function<Location, LiveData<NearbyResponse>>() {
                     @Override
                     public LiveData<NearbyResponse> apply(Location location) {
@@ -79,7 +79,7 @@ public class ListViewViewModel extends ViewModel {
             public void onChanged(NearbyResponse nearbyResponse) {
                 combineNearbyAndDetails(nearbyResponse,
                         mediatorRestaurantDetail.getValue(),
-                        repository.getLocationLiveData().getValue(),
+                        actualLocationRepository.getLocationLiveData().getValue(),
                         mediatorRestaurantAttendies.getValue());
             }
         });
@@ -88,11 +88,11 @@ public class ListViewViewModel extends ViewModel {
             public void onChanged(Map<String, Detail> restaurantDetailMap) {
                 combineNearbyAndDetails(liveDataNearby.getValue(),
                         restaurantDetailMap,
-                        repository.getLocationLiveData().getValue(),
+                        actualLocationRepository.getLocationLiveData().getValue(),
                         mediatorRestaurantAttendies.getValue());
             }
         });
-        mediatorRestaurantInfo.addSource(repository.getLocationLiveData(), new Observer<Location>() {
+        mediatorRestaurantInfo.addSource(actualLocationRepository.getLocationLiveData(), new Observer<Location>() {
             @Override
             public void onChanged(Location location) {
                 combineNearbyAndDetails(liveDataNearby.getValue(),
@@ -106,7 +106,7 @@ public class ListViewViewModel extends ViewModel {
             public void onChanged(Map<String, Integer> restaurantAttendies) {
                 combineNearbyAndDetails(liveDataNearby.getValue(),
                         mediatorRestaurantDetail.getValue(),
-                        repository.getLocationLiveData().getValue(),
+                        actualLocationRepository.getLocationLiveData().getValue(),
                         restaurantAttendies);
             }
         });

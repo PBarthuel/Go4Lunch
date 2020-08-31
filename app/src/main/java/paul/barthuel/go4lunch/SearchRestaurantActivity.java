@@ -21,8 +21,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.ui.list_view.ListViewFragment;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationFragment;
+import paul.barthuel.go4lunch.ui.notification.NotificationActivity;
+import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailActivity;
 import paul.barthuel.go4lunch.ui.workmates.WorkmatesFragment;
 
 public class SearchRestaurantActivity extends AppCompatActivity {
@@ -43,9 +46,19 @@ public class SearchRestaurantActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             if (menuItem.getItemId() == R.id.nav_logout) {
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(SearchRestaurantActivity.this,
+                startActivity(new Intent(this,
                         MainActivity.class));
                 finish();
+            }
+            if (menuItem.getItemId() == R.id.nav_settings) {
+                startActivity(new Intent(this,
+                        NotificationActivity.class));
+            }
+            if (menuItem.getItemId() == R.id.nav_your_lunch) {
+                UserRepository userRepository = new UserRepository();
+                userRepository.getTodayUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                //startActivity(RestaurantDetailActivity.navigate(this, ));
             }
             return false;
         });

@@ -23,4 +23,5 @@
 
     <string name="fb_login_protocol_scheme">fb2762630620450399</string>
     <string name="facebook_app_id">2762630620450399</string>
+    <string name="enable_notification_once_per_day">Enable notification (once per day)</string>
 </resources>

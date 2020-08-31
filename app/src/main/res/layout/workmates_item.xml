@@ -19,11 +19,22 @@
         android:id="@+id/workmates_item_tv_username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Courgette is joining (Le Courgette)"
+        android:text="Courgette is joining"
         android:textStyle="bold"
         android:layout_margin="26dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/workmates_item_iv_thumbnail"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/workmates_item_tv_restaurant_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="(le courgette)"
+        android:textStyle="bold"
+        android:layout_margin="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/workmates_item_tv_username"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

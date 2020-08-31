@@ -92,12 +92,14 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     placeDetailRepository,
                     FirebaseAuth.getInstance(),
                     restaurantRepository,
-                    userRepository);
+                    userRepository,
+                    new UriBuilder());
         }else if (modelClass.isAssignableFrom(MainViewModel.class)) {
             return (T)new MainViewModel(FirebaseAuth.getInstance(),
                     userRepository);
         }else if (modelClass.isAssignableFrom(WorkmatesViewModel.class)) {
-            return (T)new WorkmatesViewModel(userRepository);
+            return (T)new WorkmatesViewModel(userRepository,
+                    FirebaseAuth.getInstance());
         }else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
             return (T)new ChatViewModel(chatRepository);
         }

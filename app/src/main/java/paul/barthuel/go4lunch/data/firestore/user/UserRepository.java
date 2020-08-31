@@ -1,16 +1,17 @@
 package paul.barthuel.go4lunch.data.firestore.user;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import paul.barthuel.go4lunch.data.firestore.restaurant.dto.Uid;
+import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
 import paul.barthuel.go4lunch.data.firestore.user.dto.User;
 
 
@@ -48,18 +49,26 @@ public class UserRepository {
         return getUsersCollection().document(uid).set(userToCreate);
     }
 
-    public Task<Void> addRestaurantToUser(String restaurantName, String uid) {
-        Map<String, String> value = new HashMap<>();
-        value.put("restaurantName", restaurantName);
+    public Task<Void> addPlaceIdAndRestaurantNameToTodayUser(String uid, String placeId, String restaurantName) {
+        TodayUser todayUser = new TodayUser(uid, placeId, restaurantName);
         return getTodayUsersCollection()
                 .document(uid)
-                .set(value);
+                .set(todayUser);
     }
 
     // --- GET ---
 
-    public  Task<DocumentSnapshot> getUser(String uid) {
-        return getUsersCollection().document(uid).get();
+    public  LiveData<User> getUser(String uid) {
+        MutableLiveData<User> mutableLiveData = new MutableLiveData<>();
+        getUsersCollection().document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if(documentSnapshot != null) {
+                    mutableLiveData.postValue(documentSnapshot.toObject(User.class));
+                }
+            }
+        });
+        return mutableLiveData;
     }
 
     public LiveData<List<User>> getAllUsers() {
@@ -77,6 +86,34 @@ public class UserRepository {
         return mutableLiveData;
     }
 
+    public LiveData<List<TodayUser>> getAllTodayUsers() {
+        MutableLiveData<List<TodayUser>> mutableLiveData = new MutableLiveData<>();
+        getTodayUsersCollection().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<TodayUser> todayUsers = new ArrayList<>();
+                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                    todayUsers.add(queryDocumentSnapshot.toObject(TodayUser.class));
+                }
+                mutableLiveData.postValue(todayUsers);
+            }
+        });
+        return mutableLiveData;
+    }
+
+    public LiveData<User> getTodayUser(String uid) {
+        MutableLiveData<User> mutableLiveData = new MutableLiveData<>();
+        getTodayUsersCollection().document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if(documentSnapshot != null) {
+                    mutableLiveData.postValue(documentSnapshot.toObject(User.class));
+                }
+            }
+        });
+        return mutableLiveData;
+    }
+
     // --- UPDATE ---
 
     public  Task<Void> updateUsername(String username, String uid) {
@@ -88,6 +125,7 @@ public class UserRepository {
     public  Task<Void> deleteUser(String uid) {
         return getUsersCollection().document(uid).delete();
     }
+
 
 }
 

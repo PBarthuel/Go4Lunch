@@ -17,6 +17,8 @@ import java.util.List;
 import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
 import paul.barthuel.go4lunch.ui.chat.ChatActivity;
+import paul.barthuel.go4lunch.ui.list_view.RestaurantInfo;
+import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailActivity;
 
 public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.Listener {
 
@@ -58,5 +60,12 @@ public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.List
     @Override
     public void onWorkmateInfoClick(WorkmatesInfo workmatesInfo) {
         startActivity(ChatActivity.navigate(requireContext(), workmatesInfo.getId()));
+    }
+
+    @Override
+    public void onRestaurantClick(String id, String restaurantName) {
+        if (!restaurantName.equals("haven't decided yet")) {
+            startActivity(RestaurantDetailActivity.navigate(requireContext(), id, restaurantName));
+        }
     }
 }

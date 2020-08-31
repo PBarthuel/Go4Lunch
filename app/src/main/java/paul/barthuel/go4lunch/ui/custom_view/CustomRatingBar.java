@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import paul.barthuel.go4lunch.R;
 
 public class CustomRatingBar extends LinearLayout {
-    //TODO constraintLayout pas linear + mettre le patch pour remplir etoile, regarder constraintLayout customView
     public CustomRatingBar(Context context) {
         this(context, null);
     }

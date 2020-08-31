@@ -19,7 +19,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
 
     private Listener listener;
 
-    protected WorkmatesAdapter(Listener listener) {
+    public WorkmatesAdapter(Listener listener) {
         super(new WorkmatesInfoDiffCallBack());
         this.listener = listener;
     }
@@ -41,6 +41,7 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView mTextViewName;
+        private final TextView mTextViewRestaurantName;
         private final ImageView mImageViewThumbnail;
         private final View mRoot;
 
@@ -50,19 +51,28 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
             mTextViewName = itemView.findViewById(R.id.workmates_item_tv_username);
             mImageViewThumbnail = itemView.findViewById(R.id.workmates_item_iv_thumbnail);
             mRoot = itemView.findViewById(R.id.workmates_item_cl);
+            mTextViewRestaurantName = itemView.findViewById(R.id.workmates_item_tv_restaurant_name);
         }
 
-        private void bind(final WorkmatesInfo workmatesInfo, final Listener listener) {
+        private void bind(final WorkmatesInfo workmatesInfo,
+                          final Listener listener) {
 
             mTextViewName.setText(workmatesInfo.getName());
             Glide.with(mImageViewThumbnail)
                     .load(workmatesInfo.getImage())
                     .apply(RequestOptions.circleCropTransform())
                     .into(mImageViewThumbnail);
-            mRoot.setOnClickListener(new View.OnClickListener() {
+            mImageViewThumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onWorkmateInfoClick(workmatesInfo);
+                }
+            });
+            mTextViewRestaurantName.setText(workmatesInfo.getRestaurantName());
+            mTextViewRestaurantName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onRestaurantClick(workmatesInfo.getPlaceId(), workmatesInfo.getRestaurantName());
                 }
             });
         }
@@ -70,5 +80,6 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
 
     public interface Listener {
         void onWorkmateInfoClick(WorkmatesInfo workmatesInfo);
+        void onRestaurantClick(String id, String restaurantName);
     }
 }

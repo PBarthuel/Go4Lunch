@@ -18,23 +18,26 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
 import paul.barthuel.go4lunch.R;
-import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
+import paul.barthuel.go4lunch.ui.chat.ChatActivity;
+import paul.barthuel.go4lunch.ui.workmates.WorkmatesAdapter;
+import paul.barthuel.go4lunch.ui.workmates.WorkmatesInfo;
 
-public class RestaurantDetailFragment extends Fragment {
+public class RestaurantDetailFragment extends Fragment implements WorkmatesAdapter.Listener {
 
     private static final String KEY_ID = "KEY_ID";
     private static final String KEY_RESTAURANT_NAME = "KEY_RESTAURANT_NAME";
     private RestaurantDetailViewModel mViewModel;
-    private static final int REQUEST_CALL = 1;
     private TextView textViewCall;
-    private RestaurantRepository mRestaurantRepository;
 
     public static RestaurantDetailFragment newInstance(String id, String restaurantName) {
 
@@ -66,6 +69,12 @@ public class RestaurantDetailFragment extends Fragment {
         TextView textViewWebSite = view.findViewById(R.id.content_scrolling_restaurant_detail_website_iv);
         textViewCall = view.findViewById(R.id.content_scrolling_restaurant_detail_call_iv);
         TextView textViewLike = view.findViewById(R.id.content_scrolling_restaurant_detail_like_iv);
+        RecyclerView recyclerView = view.findViewById(R.id.content_scrolling_restaurant_detail_rv);
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.restaurant_detail_fab);
+
+        final WorkmatesAdapter adapter = new WorkmatesAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         mViewModel.init(getArguments().getString(KEY_ID), getArguments().getString(KEY_RESTAURANT_NAME));
         mViewModel.getLiveDataResultDetail().observe(getViewLifecycleOwner(), new Observer<RestaurantDetailInfo>() {
@@ -90,9 +99,21 @@ public class RestaurantDetailFragment extends Fragment {
                 textViewLike.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                    }
+                });
+                floatingActionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         mViewModel.goToRestaurant();
                     }
                 });
+            }
+        });
+        mViewModel.getLiveDataWormatesInfos().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesInfo>>() {
+            @Override
+            public void onChanged(List<WorkmatesInfo> workmatesInfos) {
+                adapter.submitList(workmatesInfos);
             }
         });
         return view;
@@ -124,4 +145,15 @@ public class RestaurantDetailFragment extends Fragment {
         // and launch the desired Url with CustomTabsIntent.launchUrl()
         customTabsIntent.launchUrl(requireContext(), Uri.parse(url));
     }
+
+    @Override
+    public void onWorkmateInfoClick(WorkmatesInfo workmatesInfo) {
+        startActivity(ChatActivity.navigate(requireContext(), workmatesInfo.getId()));
+    }
+
+    @Override
+    public void onRestaurantClick(String id, String restaurantName) {
+        startActivity(RestaurantDetailActivity.navigate(requireContext(), id, restaurantName));
+    }
+
 }

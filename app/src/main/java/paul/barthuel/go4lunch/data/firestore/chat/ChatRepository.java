@@ -88,10 +88,4 @@ public class ChatRepository {
                 .collection("chat")
                 .add(message);
     }
-
-    // --- GET ---
-
-
-    // --- DELETE ---
-
 }

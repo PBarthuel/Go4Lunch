@@ -2,6 +2,31 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'jacoco'
 
+android.applicationVariants.all { variant ->
+    def variantName = variant.name.capitalize()
+    def filesToAnalyze = [
+            '**/*ViewModel.class',
+            '**/*Repository.class'
+    ]
+
+    task("jacoco${variantName}Report", type: JacocoReport, dependsOn: "test${variantName}UnitTest") {
+        group 'Reporting'
+        description "Generate ${variantName} Jacoco coverage reports."
+
+        reports {
+            xml.enabled = true
+            html {
+                enabled = true
+                destination file("${buildDir}/reports/jacoco")
+            }
+        }
+
+        getSourceDirectories().setFrom(files(android.sourceSets.main.java.srcDirs))
+        getExecutionData().setFrom(files("${buildDir}/jacoco/test${variantName}UnitTest.exec"))
+        getClassDirectories().setFrom(fileTree(dir: variant.javaCompiler.destinationDir, includes: filesToAnalyze))
+    }
+}
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -63,6 +88,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
 
+    def work_version = "2.4.0"
+    implementation "androidx.work:work-runtime:$work_version"
+
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -73,7 +101,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    implementation 'com.google.firebase:firebase-firestore:21.4.2'
+    implementation 'com.google.firebase:firebase-firestore:21.5.0'
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.3'
 
