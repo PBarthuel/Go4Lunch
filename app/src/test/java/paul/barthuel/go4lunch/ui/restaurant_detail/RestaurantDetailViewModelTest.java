@@ -128,7 +128,10 @@ public class RestaurantDetailViewModelTest {
         List<Uid> uids = getUids();
         uidLiveData.setValue(uids);
 
+        restaurantDetailViewModel.init("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", "Benoit Paris");
+
         //When
+        LiveDataTestUtil.getOrAwaitValue(restaurantDetailViewModel.getLiveDataWormatesInfos(), 1);
         List<WorkmatesInfo> workmatesInfo = LiveDataTestUtil.getOrAwaitValue(restaurantDetailViewModel.getLiveDataWormatesInfos(), 1);
 
         //Then
