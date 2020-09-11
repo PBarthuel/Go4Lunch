@@ -46,6 +46,7 @@ public class ListViewViewModelTest {
     private MutableLiveData<Detail> detailLiveData2;
     private MutableLiveData<Location> locationLiveData;
     private MutableLiveData<Integer> attendiesLiveData;
+    private MutableLiveData<Integer> attendies2LiveData;
 
     @Mock
     ActualLocationRepository actualLocationRepository;
@@ -77,12 +78,14 @@ public class ListViewViewModelTest {
         detailLiveData2 = new MutableLiveData<>();
         locationLiveData = new MutableLiveData<>();
         attendiesLiveData = new MutableLiveData<>();
+        attendies2LiveData = new MutableLiveData<>();
 
         Mockito.doReturn(locationLiveData).when(actualLocationRepository).getLocationLiveData();
         Mockito.doReturn(nearbyReponseLiveData).when(nearbyRepository).getNearbyForLocation(any());
         Mockito.doReturn(detailLiveData).when(placeDetailRepository).getDetailForRestaurantId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
         Mockito.doReturn(detailLiveData2).when(placeDetailRepository).getDetailForRestaurantId("ChIJI5HJsx9u5kcRJl41efCbOAw");
         Mockito.doReturn(attendiesLiveData).when(restaurantRepository).getRestaurantAttendies("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
+        Mockito.doReturn(attendies2LiveData).when(restaurantRepository).getRestaurantAttendies("ChIJI5HJsx9u5kcRJl41efCbOAw");
         Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
         listViewViewModel = new ListViewViewModel(actualLocationRepository,
@@ -127,9 +130,6 @@ public class ListViewViewModelTest {
     @Test
     public void shouldMapCorrectlyWithTwoDetailAndTwoNearby() throws InterruptedException {
         //Given
-        NearbyResponse nearbyResponse = getNearbyResponses();
-        nearbyReponseLiveData.setValue(nearbyResponse);
-
         Detail detail = getRestaurantDetail();
         detailLiveData.setValue(detail);
 
@@ -139,10 +139,16 @@ public class ListViewViewModelTest {
         Integer attendies = 1;
         attendiesLiveData.setValue(attendies);
 
+        Integer attendies2 = 5;
+        attendies2LiveData.setValue(attendies2);
+
         Location location = new Location("");
         location.setLatitude(48.85838489);
         location.setLongitude(2.350088);
         locationLiveData.setValue(location);
+
+        NearbyResponse nearbyResponse = getNearbyResponses();
+        nearbyReponseLiveData.setValue(nearbyResponse);
 
         Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
@@ -243,7 +249,7 @@ public class ListViewViewModelTest {
 
         List<Result> results = new ArrayList<>();
         results.add(result);
-        //results.add(result2);
+        results.add(result2);
 
         NearbyResponse nearbyResponse = new NearbyResponse();
         nearbyResponse.setResults(results);
