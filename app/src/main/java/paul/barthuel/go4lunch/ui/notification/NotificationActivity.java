@@ -54,7 +54,7 @@ public class NotificationActivity extends AppCompatActivity {
                     notificationDao.notificationEnabled(true);
                     notificationDao.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startAlarm();
-                    //TODO mettre notif active
+                    //TODO mettre notif active avec le worker
                 } else {
                     cancelAlarm();
                 }

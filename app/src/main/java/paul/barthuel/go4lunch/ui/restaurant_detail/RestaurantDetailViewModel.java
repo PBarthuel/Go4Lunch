@@ -156,7 +156,7 @@ public class RestaurantDetailViewModel extends ViewModel {
         }else {
             isUserGoing = false;
         }*/
-        //TODO regarder ça avec anthony
+        //TODO Voir avec Anthony
 
         return new RestaurantDetailInfo(name,
                 address,

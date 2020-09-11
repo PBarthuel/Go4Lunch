@@ -35,7 +35,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
-        //TODO a faire
         if (getItemViewType(index) == ViewHolderType.LEFT.ordinal()) {
             ((LeftViewHolder) viewHolder).bind(uiMessages.get(index));
         } else {

@@ -123,7 +123,8 @@ public class ListViewViewModelTest {
         assertEquals("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", restaurantInfos.get(0).getId());
     }
 
-    //@Test
+    //TODO Regarder ça
+    @Test
     public void shouldMapCorrectlyWithTwoDetailAndTwoNearby() throws InterruptedException {
         //Given
         NearbyResponse nearbyResponse = getNearbyResponses();
@@ -165,7 +166,6 @@ public class ListViewViewModelTest {
         assertEquals("27 Rue Saint-Martin, Paris", restaurantInfos.get(1).getAddress());
         assertEquals(new Double(2.00), restaurantInfos.get(1).getRating());
         assertEquals("5437222m", restaurantInfos.get(1).getDistance());
-        assertEquals("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", restaurantInfos.get(1).getId());
     }
 
     @Test

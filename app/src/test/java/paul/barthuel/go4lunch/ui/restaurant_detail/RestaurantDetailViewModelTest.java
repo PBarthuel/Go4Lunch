@@ -42,7 +42,7 @@ public class RestaurantDetailViewModelTest {
     private MutableLiveData<List<Uid>> uidLiveData;
 
     @Mock
-    FirebaseAuth firebaseAuth;
+    FirebaseAuth auth;
 
     @Mock
     PlaceDetailRepository placeDetailRepository;
@@ -63,7 +63,7 @@ public class RestaurantDetailViewModelTest {
         placeDetailRepository = Mockito.mock(PlaceDetailRepository.class);
         restaurantRepository = Mockito.mock(RestaurantRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
-        firebaseAuth = Mockito.mock(FirebaseAuth.class);
+        auth = Mockito.mock(FirebaseAuth.class);
         uriBuilder = Mockito.mock(UriBuilder.class);
 
         detailLiveData = new MutableLiveData<>();
@@ -75,25 +75,25 @@ public class RestaurantDetailViewModelTest {
         Mockito.doReturn(uidLiveData).when(restaurantRepository).getUidsFromRestaurant("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
         Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
-        restaurantDetailViewModel = new RestaurantDetailViewModel(placeDetailRepository, firebaseAuth, restaurantRepository, userRepository, uriBuilder);
+        restaurantDetailViewModel = new RestaurantDetailViewModel(placeDetailRepository, auth, restaurantRepository, userRepository, uriBuilder);
     }
 
     @Test
     public void shouldMapCorrectlyOneDetail() throws InterruptedException {
         //Given
-            Detail detail = getRestaurantDetail();
-            detailLiveData.setValue(detail);
+        Detail detail = getRestaurantDetail();
+        detailLiveData.setValue(detail);
 
-            restaurantDetailViewModel.init("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", "Benoit Paris");
+        restaurantDetailViewModel.init("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", "Benoit Paris");
 
         // When
-            RestaurantDetailInfo restaurantDetailInfo = LiveDataTestUtil.getOrAwaitValue(restaurantDetailViewModel.getLiveDataResultDetail(), 1);
+        RestaurantDetailInfo restaurantDetailInfo = LiveDataTestUtil.getOrAwaitValue(restaurantDetailViewModel.getLiveDataResultDetail(), 1);
 
         // Then
-            assertEquals("20 Rue Saint-Martin, 75004 Paris, France", restaurantDetailInfo.getAddress());
-            assertEquals("Benoit Paris", restaurantDetailInfo.getName());
-            assertEquals("01 42 72 25 76", restaurantDetailInfo.getPhoneNumber());
-            assertEquals("https://maps.google.com/?cid=14478655399410179573", restaurantDetailInfo.getUrl());
+        assertEquals("20 Rue Saint-Martin, 75004 Paris, France", restaurantDetailInfo.getAddress());
+        assertEquals("Benoit Paris", restaurantDetailInfo.getName());
+        assertEquals("01 42 72 25 76", restaurantDetailInfo.getPhoneNumber());
+        assertEquals("https://maps.google.com/?cid=14478655399410179573", restaurantDetailInfo.getUrl());
     }
 
     private Detail getRestaurantDetail() {
@@ -120,17 +120,16 @@ public class RestaurantDetailViewModelTest {
     }
 
     //TODO regarder ça aussi
-    //@Test
-    public void shouldMapCorrectlyUids() throws InterruptedException {
+    @Test
+    public void shouldCombineCorrectlyUids() throws InterruptedException {
         //Given
-            User user = getUser();
-            userLiveData.setValue(user);
+        userLiveData.setValue(getUser());
 
-            List<Uid> uids = getUids();
-            uidLiveData.setValue(uids);
+        List<Uid> uids = getUids();
+        uidLiveData.setValue(uids);
 
         //When
-            List<WorkmatesInfo> workmatesInfo = LiveDataTestUtil.getOrAwaitValue(restaurantDetailViewModel.getLiveDataWormatesInfos(), 1);
+        List<WorkmatesInfo> workmatesInfo = LiveDataTestUtil.getOrAwaitValue(restaurantDetailViewModel.getLiveDataWormatesInfos(), 1);
 
         //Then
         assertEquals(1, workmatesInfo.size());

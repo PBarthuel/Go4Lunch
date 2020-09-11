@@ -54,7 +54,7 @@ public class WorkmatesViewModelTest {
     }
 
     @Test
-    public void shouldMapCorrectlyTOneUserWhoHasChooseARestaurant() throws InterruptedException {
+    public void shouldMapCorrectlyTOneUserWhoHasChooseARestaurantToday() throws InterruptedException {
         //Given
         Mockito.doReturn(getDefaultUser()).when(auth).getCurrentUser();
         List<User> users = new ArrayList<>();
@@ -63,10 +63,7 @@ public class WorkmatesViewModelTest {
                 "https://lh3.googleusercontent.com/-7um8S-y7QQY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3re4GaBg2ddibtBGvS7QNBelGD-9zg/s96-c/photo.jpg"));
         usersLiveData.setValue(users);
 
-        List<TodayUser> todayUsers = new ArrayList<>();
-        todayUsers.add(new TodayUser("14H2Qd18àe14é",
-                "ChIJQ0bNfR5u5kcR9Z0i41-E7sg",
-                "Benoit Paris"));
+        List<TodayUser> todayUsers = getTodayUsers();
         todayUsersLiveData.setValue(todayUsers);
 
         //When
@@ -82,7 +79,7 @@ public class WorkmatesViewModelTest {
     }
 
     @Test
-    public void shouldMapCorrectlyOneUserwhoHasntChooseARestaurant() throws InterruptedException {
+    public void shouldMapCorrectlyOneUserwhoHasntChooseARestaurantToday() throws InterruptedException {
         //Given
         Mockito.doReturn(getDefaultUser()).when(auth).getCurrentUser();
         List<User> users = new ArrayList<>();
@@ -107,7 +104,7 @@ public class WorkmatesViewModelTest {
     }
 
     @Test
-    public void shouldMapCorrectlyTwoUser() throws InterruptedException {
+    public void shouldMapCorrectlyTwoUsersAndTwoTodayUsers() throws InterruptedException {
         //Given
         Mockito.doReturn(getDefaultUser()).when(auth).getCurrentUser();
         List<User> users = getUsers();
@@ -133,11 +130,26 @@ public class WorkmatesViewModelTest {
         assertEquals("(Benoit Paris)", workmatesInfos.get(1).getRestaurantName());
     }
 
-    //TODO ça aussi
     @Test
-    public void shouldMapCorrectlyNoUser() throws InterruptedException {
+    public void shouldMapCorrectlyNoUserAndNoTodayUser() throws InterruptedException {
         //Given
         usersLiveData.setValue(null);
+
+        todayUsersLiveData.setValue(null);
+        // When
+        List<WorkmatesInfo> workmatesInfos = LiveDataTestUtil.getOrAwaitValue(workmatesViewModel.getUiModelsLiveData(), 1);
+        // Then
+        assertTrue(workmatesInfos.isEmpty());
+    }
+
+    @Test
+    public void shouldMapCorrectlyOneUserWithNoTodayUser() throws InterruptedException {
+        //Given
+        List<User> users = new ArrayList<>();
+        users.add(new User("14H2Qd18àe14é",
+                "courgette",
+                "https://lh3.googleusercontent.com/-7um8S-y7QQY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3re4GaBg2ddibtBGvS7QNBelGD-9zg/s96-c/photo.jpg"));
+        usersLiveData.setValue(users);
 
         todayUsersLiveData.setValue(null);
         // When
