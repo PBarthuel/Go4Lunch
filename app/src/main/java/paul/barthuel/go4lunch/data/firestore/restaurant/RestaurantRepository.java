@@ -34,6 +34,7 @@ public class RestaurantRepository {
 
     private static final String RESTAURANT_COLLECTION = "restaurants";
     private static final String USERS_TO_RESTAURANT_COLLECTION = "usersToRestaurant";
+    private static final String LIKED_RESTAURANT_COLLECTION = "likedRestaurants";
     private static final String KEY_RESTAURANT_NAME = "restaurantName";
 
     // --- COLLECTION REFERENCE ---
@@ -46,6 +47,11 @@ public class RestaurantRepository {
     private Query getUserstoRestaurantCollection() {
         return FirebaseFirestore.getInstance()
                 .collectionGroup(USERS_TO_RESTAURANT_COLLECTION);
+    }
+
+    private CollectionReference getLikedRestaurantCollection() {
+        return FirebaseFirestore.getInstance()
+                .collection(LIKED_RESTAURANT_COLLECTION);
     }
 
     // --- CREATE ---
@@ -62,6 +68,12 @@ public class RestaurantRepository {
         getRestaurantsCollection()
                 .document(placeId)
                 .set(restaurantNameMap);
+    }
+
+    public void addLikedRestaurant(String restaurantName, String placeId) {
+        Map<String, String> restaurantNameMap = new HashMap<>();
+        restaurantNameMap.put(KEY_RESTAURANT_NAME, restaurantName);
+        getLikedRestaurantCollection().document(placeId).set(restaurantNameMap);
     }
 
     // --- GET ---
@@ -96,6 +108,14 @@ public class RestaurantRepository {
             }
         });
         return liveData;
+    }
+
+    public Task getCurrentUser(String currentUserId, String currentPlaceId) {
+        return getRestaurantsCollection()
+                .document(currentPlaceId)
+                .collection("usersToRestaurant")
+                .whereEqualTo("uid", currentUserId)
+                .get();
     }
 
     // --- DELETE ---

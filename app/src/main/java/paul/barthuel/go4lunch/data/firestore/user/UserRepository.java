@@ -122,10 +122,13 @@ public class UserRepository {
 
     // --- DELETE ---
 
-    public  Task<Void> deleteUser(String uid) {
+    public Task<Void> deleteUser(String uid) {
         return getUsersCollection().document(uid).delete();
     }
 
+    public Task<Void> deleteTodayUser(String uid) {
+        return getTodayUsersCollection().document(uid).delete();
+    }
 
 }
 

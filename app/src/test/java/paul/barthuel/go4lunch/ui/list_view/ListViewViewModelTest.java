@@ -83,6 +83,7 @@ public class ListViewViewModelTest {
         Mockito.doReturn(detailLiveData).when(placeDetailRepository).getDetailForRestaurantId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
         Mockito.doReturn(detailLiveData2).when(placeDetailRepository).getDetailForRestaurantId("ChIJI5HJsx9u5kcRJl41efCbOAw");
         Mockito.doReturn(attendiesLiveData).when(restaurantRepository).getRestaurantAttendies("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
+        Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
         listViewViewModel = new ListViewViewModel(actualLocationRepository,
                 nearbyRepository,
@@ -100,9 +101,6 @@ public class ListViewViewModelTest {
         Detail detail = getRestaurantDetail();
         detailLiveData.setValue(detail);
 
-        Detail detail2 = new Detail();
-        detailLiveData2.setValue(detail2);
-
         Integer attendies = 1;
         attendiesLiveData.setValue(attendies);
 
@@ -110,8 +108,6 @@ public class ListViewViewModelTest {
         location.setLatitude(48.85838489);
         location.setLongitude(2.350088);
         locationLiveData.setValue(location);
-
-        Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
         //When
         List<RestaurantInfo> restaurantInfos = LiveDataTestUtil.getOrAwaitValue(listViewViewModel.getUiModelsLiveData(), 1);
@@ -276,5 +272,4 @@ public class ListViewViewModelTest {
 
         return photos;
     }
-
 }

@@ -2,6 +2,7 @@ package paul.barthuel.go4lunch.ui.restaurant_detail;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -9,7 +10,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
 import paul.barthuel.go4lunch.data.firestore.restaurant.dto.Uid;
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.firestore.user.dto.User;
-import paul.barthuel.go4lunch.data.model.detail.ResultDetail;
+import paul.barthuel.go4lunch.data.model.detail.Detail;
 import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
 import paul.barthuel.go4lunch.ui.list_view.UriBuilder;
 import paul.barthuel.go4lunch.ui.workmates.WorkmatesInfo;
@@ -31,6 +31,7 @@ public class RestaurantDetailViewModel extends ViewModel {
     private LiveData<RestaurantDetailInfo> liveDataRestaurantDetailInfo;
 
     private MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmatesInfo = new MediatorLiveData<>();
+
     private MediatorLiveData<Map<String, User>> mediatorLiveDataUsers = new MediatorLiveData<>();
 
     private String id;
@@ -56,7 +57,7 @@ public class RestaurantDetailViewModel extends ViewModel {
 
         liveDataRestaurantDetailInfo = Transformations.map(
                 placeDetailRepository.getDetailForRestaurantId(id),
-                detail -> map(detail.getResultDetail())
+                detail -> map(detail)
         );
 
         mediatorLiveDataWorkmatesInfo.addSource(mediatorLiveDataUsers, new Observer<Map<String, User>>() {
@@ -127,15 +128,15 @@ public class RestaurantDetailViewModel extends ViewModel {
     }
 
 
-    private RestaurantDetailInfo map(ResultDetail result) {
+    private RestaurantDetailInfo map(@NonNull Detail result) {
 
-        String name = result.getName();
+        String name = result.getResultDetail().getName();
 
-        String address = result.getFormattedAddress();
+        String address = result.getResultDetail().getFormattedAddress();
 
         String uri = null;
 
-        String photoReference = result.getPhotos().get(0).getPhotoReference();
+        String photoReference = result.getResultDetail().getPhotos().get(0).getPhotoReference();
         uri = uriBuilder.buildUri("https",
                 "maps.googleapis.com",
                 "maps/api/place/photo",
@@ -143,19 +144,27 @@ public class RestaurantDetailViewModel extends ViewModel {
                 new Pair<>("photoreference", photoReference),
                 new Pair<>("maxwidth", "1080"));
 
-        String id = result.getPlaceId();
+        String id = result.getResultDetail().getPlaceId();
 
-        String phoneNumber = result.getFormattedPhoneNumber();
+        String phoneNumber = result.getResultDetail().getFormattedPhoneNumber();
 
-        String url = result.getUrl();
+        String url = result.getResultDetail().getUrl();
 
-        //TODO cree un boolean pour dire si l'utilisateur y va
+        boolean isUserGoing;
+        /*if(restaurantRepository.getCurrentUser(mAuth.getCurrentUser().getUid(), id).isSuccessful()) {
+            isUserGoing = true;
+        }else {
+            isUserGoing = false;
+        }*/
+        //TODO regarder ça avec anthony
+
         return new RestaurantDetailInfo(name,
                 address,
                 uri,
                 id,
                 phoneNumber,
-                url);
+                url,
+                false);
     }
 
     public LiveData<RestaurantDetailInfo> getLiveDataResultDetail() {
@@ -164,6 +173,10 @@ public class RestaurantDetailViewModel extends ViewModel {
 
     public LiveData<List<WorkmatesInfo>> getLiveDataWormatesInfos() {
         return mediatorLiveDataWorkmatesInfo;
+    }
+
+    public void likeRestaurant() {
+        restaurantRepository.addLikedRestaurant(restaurantName, id);
     }
 
     public void goToRestaurant() {

@@ -99,7 +99,7 @@ public class RestaurantDetailFragment extends Fragment implements WorkmatesAdapt
                 textViewLike.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        mViewModel.likeRestaurant();
                     }
                 });
                 floatingActionButton.setOnClickListener(new View.OnClickListener() {

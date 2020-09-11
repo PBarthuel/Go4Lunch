@@ -34,12 +34,12 @@ public SearchRestaurantViewModel(final AutocompleteRepository autocompleteReposi
         this.actualLocationRepository = actualLocationRepository;
         this.autocompleteRepository = autocompleteRepository;
 
-        autocompleteLiveData = Transformations.switchMap(actualLocationRepository.getLocationLiveData(), new Function<Location, LiveData<Autocomplete>>() {
+        /*autocompleteLiveData = Transformations.switchMap(actualLocationRepository.getLocationLiveData(), new Function<Location, LiveData<Autocomplete>>() {
             @Override
             public LiveData<Autocomplete> apply(Location input) {
                 return autocompleteRepository.getAutocompleteForLocation();
             }
-        })
+        });*/
     }
 
 }
