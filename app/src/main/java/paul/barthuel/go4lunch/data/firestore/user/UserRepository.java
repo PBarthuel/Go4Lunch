@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -101,13 +102,13 @@ public class UserRepository {
         return mutableLiveData;
     }
 
-    public LiveData<User> getTodayUser(String uid) {
-        MutableLiveData<User> mutableLiveData = new MutableLiveData<>();
+    public LiveData<TodayUser> getTodayUser(String uid) {
+        MutableLiveData<TodayUser> mutableLiveData = new MutableLiveData<>();
         getTodayUsersCollection().document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if(documentSnapshot != null) {
-                    mutableLiveData.postValue(documentSnapshot.toObject(User.class));
+                    mutableLiveData.postValue(documentSnapshot.toObject(TodayUser.class));
                 }
             }
         });

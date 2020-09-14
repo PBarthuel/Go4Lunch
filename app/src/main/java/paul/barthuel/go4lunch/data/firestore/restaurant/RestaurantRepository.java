@@ -56,8 +56,8 @@ public class RestaurantRepository {
 
     // --- CREATE ---
 
-    public void addUserToRestaurant(String placeId, String restaurantName, String uid, String workmateName) {
-        Uid userId = new Uid(uid, workmateName);
+    public void addUserToRestaurant(String placeId, String restaurantName, String uid, String userName) {
+        Uid userId = new Uid(uid, userName);
         getRestaurantsCollection()
                 .document(placeId)
                 .collection(USERS_TO_RESTAURANT_COLLECTION)

@@ -25,8 +25,4 @@ public class TodayUser {
     public String getPlaceId() {
         return placeId;
     }
-
-
-
-
 }

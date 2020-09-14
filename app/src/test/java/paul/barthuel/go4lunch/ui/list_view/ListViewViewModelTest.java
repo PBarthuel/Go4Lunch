@@ -98,7 +98,10 @@ public class ListViewViewModelTest {
     @Test
     public void shouldMapCorrectlyOneNearbywithOneDetail() throws InterruptedException {
         //Given
-        NearbyResponse nearbyResponse = getNearbyResponses();
+        List<Result> results = new ArrayList<>();
+        results.add(getOneNearby());
+        NearbyResponse nearbyResponse = new NearbyResponse();
+        nearbyResponse.setResults(results);
         nearbyReponseLiveData.setValue(nearbyResponse);
 
         Detail detail = getRestaurantDetail();
@@ -126,7 +129,6 @@ public class ListViewViewModelTest {
         assertEquals("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", restaurantInfos.get(0).getId());
     }
 
-    //TODO Regarder ça
     @Test
     public void shouldMapCorrectlyWithTwoDetailAndTwoNearby() throws InterruptedException {
         //Given
@@ -222,17 +224,7 @@ public class ListViewViewModelTest {
     }
 
     private NearbyResponse getNearbyResponses() {
-        Result result = new Result();
-        result.setName("Benoit Paris");
-        result.setPlaceId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
-        result.setVicinity("20 Rue Saint-Martin, Paris");
-        result.setRating(3.00);
-
-        Geometry geometry = getGeometry();
-        result.setGeometry(geometry);
-
-        List<Photo> photos = getPhoto();
-        result.setPhotos(photos);
+        Result result = getOneNearby();
 
         Result result2 = new Result();
         result2.setName("CourgetteBar");
@@ -255,6 +247,21 @@ public class ListViewViewModelTest {
         nearbyResponse.setResults(results);
 
         return nearbyResponse;
+    }
+
+    private Result getOneNearby() {
+        Result result = new Result();
+        result.setName("Benoit Paris");
+        result.setPlaceId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
+        result.setVicinity("20 Rue Saint-Martin, Paris");
+        result.setRating(3.00);
+
+        Geometry geometry = getGeometry();
+        result.setGeometry(geometry);
+
+        List<Photo> photos = getPhoto();
+        result.setPhotos(photos);
+        return result;
     }
 
     private Geometry getGeometry() {

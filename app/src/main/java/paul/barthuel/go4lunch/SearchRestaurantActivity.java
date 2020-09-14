@@ -3,6 +3,7 @@ package paul.barthuel.go4lunch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +15,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -22,20 +27,26 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
+import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
+import paul.barthuel.go4lunch.injections.ViewModelFactory;
 import paul.barthuel.go4lunch.ui.list_view.ListViewFragment;
+import paul.barthuel.go4lunch.ui.list_view.ListViewViewModel;
 import paul.barthuel.go4lunch.ui.map_view.LocalisationFragment;
 import paul.barthuel.go4lunch.ui.notification.NotificationActivity;
 import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailActivity;
+import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailViewModel;
 import paul.barthuel.go4lunch.ui.workmates.WorkmatesFragment;
 
 public class SearchRestaurantActivity extends AppCompatActivity {
+
+    private SearchRestaurantViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_restaurant);
 
-        //TODO faire la recherche la mais pour les données dans le fragment de chaque truc
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(SearchRestaurantViewModel.class);
 
         BottomNavigationView bottomNavView = findViewById(R.id.bottom_nav_view);
 
@@ -55,10 +66,12 @@ public class SearchRestaurantActivity extends AppCompatActivity {
                         NotificationActivity.class));
             }
             if (menuItem.getItemId() == R.id.nav_your_lunch) {
-                UserRepository userRepository = new UserRepository();
-                userRepository.getTodayUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                //startActivity(RestaurantDetailActivity.navigate(this, ));
+                mViewModel.getCurrentTodayUserLiveData().observe(this, new Observer<TodayUser>() {
+                    @Override
+                    public void onChanged(TodayUser todayUser) {
+                        startActivity(RestaurantDetailActivity.navigate(SearchRestaurantActivity.this, todayUser.getPlaceId(), todayUser.getRestaurantName()));
+                    }
+                });
             }
             return false;
         });
@@ -131,8 +144,9 @@ public class SearchRestaurantActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        //TODO faire la searchView ici
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -1,24 +1,24 @@
 package paul.barthuel.go4lunch;
 
-import android.location.Location;
-
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
+import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
+import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
 import paul.barthuel.go4lunch.data.model.autocomplet.Autocomplete;
 import paul.barthuel.go4lunch.data.model.autocomplet.Prediction;
 import paul.barthuel.go4lunch.data.retrofit.AutocompleteRepository;
-import paul.barthuel.go4lunch.ui.list_view.RestaurantInfo;
 
 public class SearchRestaurantViewModel extends ViewModel {
 
     private final AutocompleteRepository autocompleteRepository;
     private ActualLocationRepository actualLocationRepository;
+    private final UserRepository userRepository;
 
     LiveData<Autocomplete> autocompleteLiveData;
 
@@ -29,10 +29,12 @@ public class SearchRestaurantViewModel extends ViewModel {
     }
 
 public SearchRestaurantViewModel(final AutocompleteRepository autocompleteRepository,
-                                 final ActualLocationRepository actualLocationRepository) {
+                                 final ActualLocationRepository actualLocationRepository,
+                                 final UserRepository userRepository) {
 
         this.actualLocationRepository = actualLocationRepository;
         this.autocompleteRepository = autocompleteRepository;
+        this.userRepository = userRepository;
 
         /*autocompleteLiveData = Transformations.switchMap(actualLocationRepository.getLocationLiveData(), new Function<Location, LiveData<Autocomplete>>() {
             @Override
@@ -40,6 +42,10 @@ public SearchRestaurantViewModel(final AutocompleteRepository autocompleteReposi
                 return autocompleteRepository.getAutocompleteForLocation();
             }
         });*/
-    }
-
 }
+
+    public LiveData<TodayUser> getCurrentTodayUserLiveData() {
+        return userRepository.getTodayUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
+    }
+}
+

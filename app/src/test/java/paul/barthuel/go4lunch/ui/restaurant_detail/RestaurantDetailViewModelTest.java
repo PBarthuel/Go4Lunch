@@ -119,7 +119,6 @@ public class RestaurantDetailViewModelTest {
         return photos;
     }
 
-    //TODO regarder ça aussi
     @Test
     public void shouldCombineCorrectlyUids() throws InterruptedException {
         //Given
