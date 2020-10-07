@@ -7,6 +7,16 @@
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground">
 
+    <View
+        android:id="@+id/restaurant_description_item_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:background="@color/selected_background_color" />
+
     <ImageView
         android:id="@+id/restaurant_description_item_iv_thumbnail"
         android:layout_width="@dimen/image_size"

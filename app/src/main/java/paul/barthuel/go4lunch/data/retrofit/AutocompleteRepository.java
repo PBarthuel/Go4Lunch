@@ -2,6 +2,8 @@ package paul.barthuel.go4lunch.data.retrofit;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -12,23 +14,22 @@ import retrofit2.Response;
 
 public class AutocompleteRepository {
 
-    public LiveData<Autocomplete> getAutocompleteForLocation(String userInput, Location location) {
+    public LiveData<Autocomplete> getAutocompleteForLocation(@NonNull String userInput, @NonNull Location location) {
         final MutableLiveData<Autocomplete> liveData = new MutableLiveData<>();
         RetrofitService.getInstance().getGooglePlacesAPI().getAutocompleteSearch(userInput,
                 location.getLatitude() + "," + location.getLongitude(),
                 500,
-                "strictbounds",
                 "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs")
                 .enqueue(new Callback<Autocomplete>() {
                     @Override
-                    public void onResponse(Call<Autocomplete> call, Response<Autocomplete> response) {
+                    public void onResponse(@NonNull Call<Autocomplete> call, @NonNull Response<Autocomplete> response) {
                         if (response.body() != null) {
                             liveData.postValue(response.body());
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Autocomplete> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Autocomplete> call, @NonNull Throwable t) {
                         t.printStackTrace();
                     }
                 });

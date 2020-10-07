@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import paul.barthuel.go4lunch.R;
-import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailActivity;
 
 public class ChatActivity extends AppCompatActivity {
 

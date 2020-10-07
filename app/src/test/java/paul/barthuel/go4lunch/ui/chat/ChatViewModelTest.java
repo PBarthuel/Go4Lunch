@@ -3,14 +3,14 @@ package paul.barthuel.go4lunch.ui.chat;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.threeten.bp.Clock;
-import org.threeten.bp.LocalDateTime;
 
 import java.util.List;
 
@@ -29,11 +29,15 @@ public class ChatViewModelTest {
     @Mock
     ChatRepository chatRepository;
 
+    @Mock
+    FirebaseAuth auth;
+
     private ChatViewModel chatViewModel;
 
     @Before
     public void setup() {
         chatRepository = Mockito.mock(ChatRepository.class);
+        auth = Mockito.mock(FirebaseAuth.class);
 
         messagesLiveData = new MutableLiveData<>();
 
@@ -42,18 +46,20 @@ public class ChatViewModelTest {
         chatViewModel = new ChatViewModel(chatRepository);
     }
 
-    /*@Test
+    @Test
     public void shouldShowTheDateLikeHHmmIfTheDayStoredIsToday() throws InterruptedException {
         //Given
         Message message = getMessage();
         messagesLiveData.setValue(message);
 
+        chatViewModel.init("16sd496xc496");
+
         //When
-        List<UiMessage> messages = LiveDataTestUtil.getOrAwaitValue(chatViewModel.getUiModelsLiveData());
+        List<UiMessage> messages = LiveDataTestUtil.getOrAwaitValue(chatViewModel.getUiModelsLiveData(), 1);
 
         //Then
         Assert.assertEquals("'à '18:27", messages.get(0).getDate());
-    }*/
+    }
 
     public Message getMessage() {
         return new Message("courgette",

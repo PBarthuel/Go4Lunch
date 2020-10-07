@@ -1,13 +1,13 @@
 package paul.barthuel.go4lunch.ui.restaurant_detail;
 
 public class RestaurantDetailInfo {
-    private String name;
-    private String address;
-    private String image;
-    private String id;
-    private String phoneNumber;
-    private String url;
-    private boolean isUserGoing;
+    private final String name;
+    private final String address;
+    private final String image;
+    private final String id;
+    private final String phoneNumber;
+    private final String url;
+    private final boolean isUserGoing;
 
     public String getName() {
         return name;

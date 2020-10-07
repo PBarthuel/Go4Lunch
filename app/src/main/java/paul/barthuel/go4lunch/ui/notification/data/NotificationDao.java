@@ -5,12 +5,12 @@ import android.content.SharedPreferences;
 
 public class NotificationDao {
 
-    private SharedPreferences sharedPreferences;
-    private static String SHARED_PREFS = "sharedPrefs";
+    private final SharedPreferences sharedPreferences;
     private static final String KEY_USER_ID = "KEY_USER_ID";
 
     public NotificationDao(Context context) {
 
+        String SHARED_PREFS = "sharedPrefs";
         sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
     }
 

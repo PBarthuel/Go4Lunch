@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -16,8 +15,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.List;
 
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
 
@@ -40,19 +37,16 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel.class);
-        mViewModel.getUiModelsLiveData().observe(this, new Observer<List<LunchMarker>>() {
-            @Override
-            public void onChanged(List<LunchMarker> lunchMarkers) {
-                for (LunchMarker lunchMarker : lunchMarkers) {
-                    googleMap.addMarker(
-                            new MarkerOptions().position(
-                                    new LatLng(
-                                            lunchMarker.getLatitude(),
-                                            lunchMarker.getLongitude()
-                                    )
-                            ).title(lunchMarker.getName())
-                    );
-                }
+        mViewModel.getUiModelsLiveData().observe(this, lunchMarkers -> {
+            for (LunchMarker lunchMarker : lunchMarkers) {
+                googleMap.addMarker(
+                        new MarkerOptions().position(
+                                new LatLng(
+                                        lunchMarker.getLatitude(),
+                                        lunchMarker.getLongitude()
+                                )
+                        ).title(lunchMarker.getName())
+                );
             }
         });
     }

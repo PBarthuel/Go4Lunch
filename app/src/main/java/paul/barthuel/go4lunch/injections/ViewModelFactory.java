@@ -6,12 +6,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import paul.barthuel.go4lunch.ActualLocationRepository;
+import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
 import paul.barthuel.go4lunch.MainViewModel;
-import paul.barthuel.go4lunch.SearchRestaurantViewModel;
+import paul.barthuel.go4lunch.ui.search_restaurant.SearchRestaurantViewModel;
 import paul.barthuel.go4lunch.data.firestore.chat.ChatRepository;
 import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
+import paul.barthuel.go4lunch.data.local.UserSearchRepository;
 import paul.barthuel.go4lunch.data.retrofit.AutocompleteRepository;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
@@ -29,17 +30,19 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     private final ActualLocationRepository actualLocationRepository;
     @NonNull
-    private NearbyRepository nearbyRepository;
+    private final NearbyRepository nearbyRepository;
     @NonNull
-    private PlaceDetailRepository placeDetailRepository;
+    private final PlaceDetailRepository placeDetailRepository;
     @NonNull
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     @NonNull
-    private RestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
     @NonNull
-    private ChatRepository chatRepository;
+    private final ChatRepository chatRepository;
     @NonNull
-    private AutocompleteRepository autocompleteRepository;
+    private final AutocompleteRepository autocompleteRepository;
+    @NonNull
+    private final UserSearchRepository userSearchRepository;
 
     private ViewModelFactory(
             @NonNull ActualLocationRepository actualLocationRepository,
@@ -48,7 +51,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             @NonNull UserRepository userRepository,
             @NonNull RestaurantRepository restaurantRepository,
             @NonNull ChatRepository chatRepository,
-            @NonNull AutocompleteRepository autocompleteRepository) {
+            @NonNull AutocompleteRepository autocompleteRepository,
+            @NonNull UserSearchRepository userSearchRepository) {
         this.actualLocationRepository = actualLocationRepository;
         this.nearbyRepository = nearbyRepository;
         this.placeDetailRepository = placeDetailRepository;
@@ -56,6 +60,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.restaurantRepository = restaurantRepository;
         this.chatRepository = chatRepository;
         this.autocompleteRepository = autocompleteRepository;
+        this.userSearchRepository = userSearchRepository;
     }
 
     public static ViewModelFactory getInstance() {
@@ -69,7 +74,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                             new UserRepository(),
                             new RestaurantRepository(),
                             new ChatRepository(),
-                            new AutocompleteRepository()
+                            new AutocompleteRepository(),
+                            UserSearchRepository.getInstance()
                     );
                 }
             }
@@ -85,14 +91,16 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(LocalisationViewModel.class)) {
             return (T) new LocalisationViewModel(
                     actualLocationRepository,
-                    nearbyRepository);
+                    nearbyRepository,
+                    userSearchRepository);
         }else if (modelClass.isAssignableFrom(ListViewViewModel.class)) {
             return (T) new ListViewViewModel(
                     actualLocationRepository,
                     nearbyRepository,
                     placeDetailRepository,
                     restaurantRepository,
-                    new UriBuilder());
+                    new UriBuilder(),
+                    userSearchRepository);
         }else if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)) {
             return (T) new RestaurantDetailViewModel(
                     placeDetailRepository,
@@ -111,7 +119,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         }else if (modelClass.isAssignableFrom(SearchRestaurantViewModel.class)) {
             return (T)new SearchRestaurantViewModel(autocompleteRepository,
                     actualLocationRepository,
-                    userRepository);
+                    userRepository,
+                    userSearchRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

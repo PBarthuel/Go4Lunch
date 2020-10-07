@@ -17,13 +17,11 @@ import paul.barthuel.go4lunch.data.firestore.restaurant.dto.Uid;
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
 import paul.barthuel.go4lunch.data.model.detail.Detail;
-import paul.barthuel.go4lunch.data.retrofit.PlaceDetailRepository;
+import paul.barthuel.go4lunch.data.retrofit.GooglePlacesAPI;
+import paul.barthuel.go4lunch.data.retrofit.RetrofitService;
+import retrofit2.Response;
 
 public class NotificationWorker extends Worker {
-
-    private UserRepository userRepository;
-    private RestaurantRepository restaurantRepository;
-    private PlaceDetailRepository placeDetailRepository;
 
     public NotificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -35,33 +33,53 @@ public class NotificationWorker extends Worker {
 
         NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
 
-        userRepository = new UserRepository();
-        placeDetailRepository = new PlaceDetailRepository();
-        restaurantRepository =  new RestaurantRepository();
+        UserRepository userRepository = new UserRepository();
+        //PlaceDetailRepository placeDetailRepository = new PlaceDetailRepository();
+        RestaurantRepository restaurantRepository = new RestaurantRepository();
 
-        if (userRepository.getTodayUser(FirebaseAuth.getInstance().getCurrentUser().getUid()) != null) {
-            TodayUser todayUser = userRepository.getTodayUser(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue();
-            if (todayUser != null) {
-                Detail detail = placeDetailRepository.getDetailForRestaurantId(todayUser.getPlaceId()).getValue();
-                List<Uid> uids = restaurantRepository.getUidsFromRestaurant(todayUser.getPlaceId()).getValue();
-                StringBuilder allWorkmatesNames = new StringBuilder();
-                if (uids != null) {
-                    for (Uid uid : uids) {
-                        allWorkmatesNames.append(uid.getWorkmateName());
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if (userRepository.getTodayUser(FirebaseAuth.getInstance().getCurrentUser().getUid()) != null) {
+                TodayUser todayUser = userRepository
+                        .getTodayUserSync(FirebaseAuth
+                                .getInstance()
+                                .getCurrentUser()
+                                .getUid());
+                if (todayUser != null) {
+                    GooglePlacesAPI service  = RetrofitService.getInstance().getGooglePlacesAPI();
+                    try {
+                        Response<Detail> detail = service.getDetailSearch(todayUser.getPlaceId(),
+                                "formatted_address,name",
+                                "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs").execute();
+                        Detail detailSync = detail.body();
+
+                        List<Uid> uids = restaurantRepository.getUidsSync(todayUser.getPlaceId());
+                        StringBuilder allWorkmatesNames = new StringBuilder();
+                        if (uids != null) {
+                            for (Uid uid : uids) {
+                                if(!uid.getUid().equals(todayUser.getUserId())) {
+                                    allWorkmatesNames.append(uid.getWorkmateName());
+                                }
+                            }
+                        }
+
+                        if (detailSync != null) {
+                            notificationHelper.displayNotification(detailSync.getResultDetail().getName() +
+                                    " " +
+                                    detailSync.getResultDetail().getFormattedAddress() +
+                                    " " +
+                                    allWorkmatesNames);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.i("call", "fail");
+                        return Result.failure();
                     }
-                }
-                if (detail != null) {
-                    notificationHelper.displayNotification(detail.getResultDetail().getName() +
-                            " " +
-                            detail.getResultDetail().getFormattedAddress() +
-                            " " +
-                            allWorkmatesNames);
                 }
             }
         }
 
         Log.i("call", "succes");
         return Result.success();
-
     }
 }

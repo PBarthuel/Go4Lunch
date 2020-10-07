@@ -7,17 +7,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
 import paul.barthuel.go4lunch.ui.chat.ChatActivity;
-import paul.barthuel.go4lunch.ui.list_view.RestaurantInfo;
 import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailActivity;
 
 public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.Listener {
@@ -47,12 +43,7 @@ public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.List
         final WorkmatesAdapter adapter = new WorkmatesAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesInfo>>() {
-            @Override
-            public void onChanged(List<WorkmatesInfo> workmatesInfos) {
-                adapter.submitList(workmatesInfos);
-            }
-        });
+        mViewModel.getUiModelsLiveData().observe(getViewLifecycleOwner(), adapter::submitList);
 
         return view;
     }

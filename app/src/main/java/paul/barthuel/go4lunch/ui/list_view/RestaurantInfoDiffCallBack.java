@@ -16,6 +16,7 @@ class RestaurantInfoDiffCallBack extends androidx.recyclerview.widget.DiffUtil.I
                 && oldItem.getDistance().equals(newItem.getDistance())
                 && oldItem.getAttendies().equals(newItem.getAttendies())
                 && oldItem.getOpeningHours() != null
-                && oldItem.getOpeningHours().equals(newItem.getOpeningHours());
+                && oldItem.getOpeningHours().equals(newItem.getOpeningHours())
+                && oldItem.getBackgroundColor() == newItem.getBackgroundColor();
     }
 }

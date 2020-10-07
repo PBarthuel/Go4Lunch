@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,7 +12,6 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZoneOffset;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
@@ -27,7 +25,7 @@ public class ChatViewModel extends ViewModel {
 
     private final ChatRepository chatRepository;
 
-    private MediatorLiveData<List<UiMessage>> liveDataMessages = new MediatorLiveData<>();
+    private final MediatorLiveData<List<UiMessage>> liveDataMessages = new MediatorLiveData<>();
     private String workmateId;
 
     LiveData<List<UiMessage>> getUiModelsLiveData() {
@@ -40,10 +38,9 @@ public class ChatViewModel extends ViewModel {
                 "init() called with: wormateId = [" + workmateId + "]");
         this.workmateId = workmateId;
 
-        liveDataMessages.addSource(chatRepository.getChatForUsers(FirebaseAuth.getInstance().getCurrentUser().getUid(), workmateId),
-                new Observer<List<Message>>() {
-                    @Override
-                    public void onChanged(List<Message> messages) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            liveDataMessages.addSource(chatRepository.getChatForUsers(FirebaseAuth.getInstance().getCurrentUser().getUid(), workmateId),
+                    messages -> {
                         List<UiMessage> uiMessages = new ArrayList<>(messages.size());
                         for (Message message : messages) {
                             String formattedDate;
@@ -59,21 +56,22 @@ public class ChatViewModel extends ViewModel {
                                     message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())));
                         }
                         liveDataMessages.setValue(uiMessages);
-                    }
-                });
+                    });
+        }
     }
 
     public ChatViewModel(final ChatRepository chatRepository) {
 
         this.chatRepository = chatRepository;
-
     }
 
     public void sendMessage(String message) {
-        chatRepository.createChatMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                workmateId,
-                FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                ZonedDateTime.now().toInstant().toEpochMilli(),
-                message);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            chatRepository.createChatMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                    workmateId,
+                    FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                    ZonedDateTime.now().toInstant().toEpochMilli(),
+                    message);
+        }
     }
 }

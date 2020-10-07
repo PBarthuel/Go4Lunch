@@ -2,6 +2,7 @@ package paul.barthuel.go4lunch.data.retrofit;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -21,14 +22,14 @@ public class NearbyRepository {
                 "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs")
                 .enqueue(new Callback<NearbyResponse>() {
                     @Override
-                    public void onResponse(Call<NearbyResponse> call, Response<NearbyResponse> response) {
+                    public void onResponse(@NonNull Call<NearbyResponse> call, @NonNull Response<NearbyResponse> response) {
                         if (response.body() != null) {
                             liveData.postValue(response.body());
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<NearbyResponse> call, Throwable t) {
+                    public void onFailure(@NonNull Call<NearbyResponse> call, @NonNull Throwable t) {
                         t.printStackTrace();
                     }
                 });

@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,46 +75,25 @@ public class RestaurantDetailFragment extends Fragment implements WorkmatesAdapt
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        mViewModel.init(getArguments().getString(KEY_ID), getArguments().getString(KEY_RESTAURANT_NAME));
-        mViewModel.getLiveDataResultDetail().observe(getViewLifecycleOwner(), new Observer<RestaurantDetailInfo>() {
-            @Override
-            public void onChanged(RestaurantDetailInfo restaurantDetailInfo) {
-                Glide.with(imageView).load(restaurantDetailInfo.getImage()).into(imageView);
-                textViewTitle.setText(restaurantDetailInfo.getName());
-                textViewAddress.setText(restaurantDetailInfo.getAddress());
-                textViewWebSite.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onWebSiteClick(restaurantDetailInfo.getUrl());
-                    }
-                });
-                textViewCall.setTag(restaurantDetailInfo.getPhoneNumber());
-                textViewCall.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        makePhoneCall();
-                    }
-                });
-                textViewLike.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mViewModel.likeRestaurant();
-                    }
-                });
-                floatingActionButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mViewModel.goToRestaurant();
-                    }
-                });
+        if(getArguments() != null) {
+            mViewModel.init(getArguments().getString(KEY_ID), getArguments().getString(KEY_RESTAURANT_NAME));
+        }
+        mViewModel.getLiveDataResultDetail().observe(getViewLifecycleOwner(), restaurantDetailInfo -> {
+            Glide.with(imageView).load(restaurantDetailInfo.getImage()).into(imageView);
+            textViewTitle.setText(restaurantDetailInfo.getName());
+            textViewAddress.setText(restaurantDetailInfo.getAddress());
+            textViewWebSite.setOnClickListener(view1 -> onWebSiteClick(restaurantDetailInfo.getUrl()));
+            textViewCall.setTag(restaurantDetailInfo.getPhoneNumber());
+            textViewCall.setOnClickListener(view1 -> makePhoneCall());
+            textViewLike.setOnClickListener(view1 -> mViewModel.likeRestaurant());
+            if(restaurantDetailInfo.getIsUserGoing()) {
+                floatingActionButton.setImageResource(R.drawable.ic_baseline_check_circle_24);
+            }else {
+                floatingActionButton.setImageDrawable(null);
             }
+            floatingActionButton.setOnClickListener(v -> mViewModel.goToRestaurant());
         });
-        mViewModel.getLiveDataWormatesInfos().observe(getViewLifecycleOwner(), new Observer<List<WorkmatesInfo>>() {
-            @Override
-            public void onChanged(List<WorkmatesInfo> workmatesInfos) {
-                adapter.submitList(workmatesInfos);
-            }
-        });
+        mViewModel.getLiveDataWormatesInfos().observe(getViewLifecycleOwner(), adapter::submitList);
         return view;
     }
 

@@ -1,5 +1,6 @@
 package paul.barthuel.go4lunch.data.retrofit;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -18,14 +19,14 @@ public class PlaceDetailRepository {
                 "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs")
                 .enqueue(new Callback<Detail>() {
                     @Override
-                    public void onResponse(Call<Detail> call, Response<Detail> response) {
+                    public void onResponse(@NonNull Call<Detail> call, @NonNull Response<Detail> response) {
                         if (response.body() != null) {
                             liveData.postValue(response.body());
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Detail> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Detail> call, @NonNull Throwable t) {
                         t.printStackTrace();
                     }
                 });

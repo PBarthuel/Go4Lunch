@@ -1,10 +1,5 @@
 package paul.barthuel.go4lunch.data.firestore.chat.dto;
 
-import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZoneOffset;
-
 public class Message {
 
     private String text;

@@ -3,12 +3,10 @@ package paul.barthuel.go4lunch.ui.notification;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.Constraints;
-import androidx.work.Data;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -25,8 +23,6 @@ public class NotificationActivity extends AppCompatActivity {
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String ID = "id";
-
-    public static final String KEY_USER_INPUT = "KEY_USER_INPUT";
 
     private PeriodicWorkRequest saveRequest;
 
@@ -47,17 +43,15 @@ public class NotificationActivity extends AppCompatActivity {
             switchNotification.setChecked(false);
         }
 
-        switchNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    notificationDao.notificationEnabled(true);
+        switchNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                notificationDao.notificationEnabled(true);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null) {
                     notificationDao.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    startAlarm();
-                    //TODO mettre notif active avec le worker
-                } else {
-                    cancelAlarm();
                 }
+                startAlarm();
+            } else {
+                cancelAlarm();
             }
         });
     }

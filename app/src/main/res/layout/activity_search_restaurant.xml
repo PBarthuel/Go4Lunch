@@ -5,7 +5,7 @@
     android:id="@+id/activity_search_restaurant"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchRestaurantActivity">
+    tools:context=".ui.search_restaurant.SearchRestaurantActivity">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
@@ -59,12 +59,16 @@
                     android:layout_height="match_parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_restaurant_rv"
+                    android:id="@+id/search_restaurant_autocomplete_rv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:background="#FFF"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

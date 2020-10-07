@@ -2,23 +2,31 @@ package paul.barthuel.go4lunch.ui.map_view;
 
 import android.location.Location;
 
-import androidx.arch.core.util.Function;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import paul.barthuel.go4lunch.ActualLocationRepository;
+import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
+import paul.barthuel.go4lunch.R;
+import paul.barthuel.go4lunch.data.local.UserSearchRepository;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
 import paul.barthuel.go4lunch.data.model.nearby.Result;
 import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 
 public class LocalisationViewModel extends ViewModel {
 
-    private ActualLocationRepository actualLocationRepository;
-    private LiveData<List<LunchMarker>> liveDataLunchMarker;
+    private final ActualLocationRepository actualLocationRepository;
+    private final UserSearchRepository userSearchRepository;
+
+    private final MediatorLiveData<List<LunchMarker>> liveDataLunchMarker = new MediatorLiveData<>();
+
+    private final LiveData<NearbyResponse> liveDataNearby;
 
     LiveData<List<LunchMarker>> getUiModelsLiveData() {
         return liveDataLunchMarker;
@@ -27,41 +35,60 @@ public class LocalisationViewModel extends ViewModel {
     private boolean isMapReady;
     private boolean hasLocationPermissions;
 
-    public LocalisationViewModel(final ActualLocationRepository repository,
-                                 final NearbyRepository nearbyRepository) {
+    public LocalisationViewModel(final ActualLocationRepository actualLocationRepository,
+                                 final NearbyRepository nearbyRepository,
+                                 final UserSearchRepository userSearchRepository) {
 
-        actualLocationRepository = repository;
+        this.actualLocationRepository = actualLocationRepository;
+        this.userSearchRepository = userSearchRepository;
 
-        liveDataLunchMarker = Transformations.map(
-                Transformations.switchMap(
-                        repository.getLocationLiveData(),
-                        new Function<Location, LiveData<NearbyResponse>>() {
-                            @Override
-                            public LiveData<NearbyResponse> apply(Location location) {
-                                return nearbyRepository.getNearbyForLocation(location);
-                            }
-                        }), new Function<NearbyResponse, List<LunchMarker>>() {
-                    @Override
-                    public List<LunchMarker> apply(NearbyResponse nearbyResponse) {
-                        return map(nearbyResponse.getResults());
-                    }
-                });
+        LiveData<Location> locationLiveData = actualLocationRepository.getLocationLiveData();
+        LiveData<String> userSearchQueryLiveData = userSearchRepository.getUserSearchQueryLiveData();
+
+        liveDataNearby = Transformations.switchMap(
+                locationLiveData,
+                nearbyRepository::getNearbyForLocation);
+
+        liveDataLunchMarker.addSource(liveDataNearby, new Observer<NearbyResponse>() {
+            @Override
+            public void onChanged(NearbyResponse nearbyResponse) {
+                map(nearbyResponse, userSearchQueryLiveData.getValue());
+            }
+        });
+        liveDataLunchMarker.addSource(userSearchQueryLiveData, new Observer<String>() {
+            @Override
+            public void onChanged(String userSearchQuery) {
+                map(liveDataNearby.getValue(), userSearchQuery);
+            }
+        });
     }
 
-    private List<LunchMarker> map(
-            List<Result> results) {
+    private void map(
+            @Nullable NearbyResponse nearbyResponse,
+            @Nullable String userSearchQuery) {
 
         List<LunchMarker> lunchMarkers = new ArrayList<>();
 
-        for (Result result : results) {
+        if (nearbyResponse != null && nearbyResponse.getResults() != null) {
+            for (Result result : nearbyResponse.getResults()) {
 
-            double latitude = result.getGeometry().getLocation().getLat();
-            double longitude = result.getGeometry().getLocation().getLng();
-            String name = result.getName();
+                double latitude = result.getGeometry().getLocation().getLat();
+                double longitude = result.getGeometry().getLocation().getLng();
+                String name = result.getName();
 
-            lunchMarkers.add(new LunchMarker(latitude, longitude, name));
+                int backGroundColor;
+
+                //TODO mettre les bonnes couleur pour les marker
+                if (userSearchQuery != null && name.startsWith(userSearchQuery)) {
+                    backGroundColor = R.color.selected_background_color;
+                }else {
+                    backGroundColor = android.R.color.white;
+                }
+
+                lunchMarkers.add(new LunchMarker(latitude, longitude, name, backGroundColor));
+            }
         }
-        return lunchMarkers;
+        liveDataLunchMarker.setValue(lunchMarkers);
     }
 
     private void enableGps() {

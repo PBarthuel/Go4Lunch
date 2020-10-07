@@ -1,4 +1,4 @@
-package paul.barthuel.go4lunch;
+package paul.barthuel.go4lunch.data.local;
 
 import android.location.Location;
 import android.os.Looper;
@@ -13,13 +13,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import paul.barthuel.go4lunch.data.retrofit.GooglePlacesAPI;
-import retrofit2.Call;
+import paul.barthuel.go4lunch.MainApplication;
 
 public class ActualLocationRepository {
 
     private static ActualLocationRepository sInstance;
-    private Call<GooglePlacesAPI> callGooglePlacesAPI;
 
     public static ActualLocationRepository getInstance() {
 
@@ -30,14 +28,12 @@ public class ActualLocationRepository {
         return sInstance;
     }
 
-    private MutableLiveData<Location> mutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Location> mutableLiveData = new MutableLiveData<>();
 
 
     public LiveData<Location> getLocationLiveData() {
         return mutableLiveData;
     }
-
-
 
     public void initLocation() {
 

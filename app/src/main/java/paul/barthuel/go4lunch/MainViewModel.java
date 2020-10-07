@@ -8,8 +8,8 @@ import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 
 public class MainViewModel extends ViewModel {
 
-    private FirebaseAuth mAuth;
-    private UserRepository mUserRepository;
+    private final FirebaseAuth mAuth;
+    private final UserRepository mUserRepository;
 
     public MainViewModel(FirebaseAuth mAuth, UserRepository mUserRepository) {
         this.mAuth = mAuth;

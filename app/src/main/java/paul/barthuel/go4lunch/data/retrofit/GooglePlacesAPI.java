@@ -24,6 +24,5 @@ public interface GooglePlacesAPI {
     Call<Autocomplete> getAutocompleteSearch(@Query("input") String userInput,
                                              @Query("location") String location,
                                              @Query("radius") int radius,
-                                             String strictbounds,
                                              @Query("key") String key);
 }

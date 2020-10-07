@@ -2,12 +2,10 @@ package paul.barthuel.go4lunch.ui.restaurant_detail;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,17 +26,17 @@ import paul.barthuel.go4lunch.ui.workmates.WorkmatesInfo;
 
 public class RestaurantDetailViewModel extends ViewModel {
 
-    private LiveData<RestaurantDetailInfo> liveDataRestaurantDetailInfo;
+    private final MediatorLiveData<RestaurantDetailInfo> liveDataRestaurantDetailInfo = new MediatorLiveData<>();
 
-    private MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmatesInfo = new MediatorLiveData<>();
+    private final MediatorLiveData<List<WorkmatesInfo>> mediatorLiveDataWorkmatesInfo = new MediatorLiveData<>();
 
-    private MediatorLiveData<Map<String, User>> mediatorLiveDataUsers = new MediatorLiveData<>();
+    private final MediatorLiveData<Map<String, User>> mediatorLiveDataUsers = new MediatorLiveData<>();
 
     private String id;
     private String restaurantName;
-    private List<String> alreadyFetchUids = new ArrayList<>();
+    private final List<String> alreadyFetchUids = new ArrayList<>();
 
-    private FirebaseAuth mAuth;
+    private final FirebaseAuth mAuth;
 
     private final UriBuilder uriBuilder;
     private final PlaceDetailRepository placeDetailRepository;
@@ -54,29 +52,69 @@ public class RestaurantDetailViewModel extends ViewModel {
 
         mediatorLiveDataUsers.setValue(new HashMap<>());
         LiveData<List<Uid>> liveDataAttendiesUid = restaurantRepository.getUidsFromRestaurant(id);
+        if(mAuth.getCurrentUser() != null) {
+            LiveData<Boolean> isUserGoing = restaurantRepository.isUserGoingToRestaurant(mAuth.getCurrentUser().getUid(),
+                    id);
 
-        liveDataRestaurantDetailInfo = Transformations.map(
-                placeDetailRepository.getDetailForRestaurantId(id),
-                detail -> map(detail)
-        );
 
-        mediatorLiveDataWorkmatesInfo.addSource(mediatorLiveDataUsers, new Observer<Map<String, User>>() {
-            @Override
-            public void onChanged(Map<String, User> users) {
-                combineUids(users,
-                        liveDataAttendiesUid.getValue());
-            }
-        });
-        mediatorLiveDataWorkmatesInfo.addSource(liveDataAttendiesUid, new Observer<List<Uid>>() {
-            @Override
-            public void onChanged(List<Uid> uids) {
-                combineUids(mediatorLiveDataUsers.getValue(),
-                        uids);
-            }
-        });
+            LiveData<Detail> detail = placeDetailRepository.getDetailForRestaurantId(id);
+
+            liveDataRestaurantDetailInfo.addSource(detail, detail1 -> combineDetailsAndUserGoing(detail1,
+                    isUserGoing.getValue()));
+            liveDataRestaurantDetailInfo.addSource(isUserGoing, isUserGoing1 -> combineDetailsAndUserGoing(detail.getValue(),
+                    isUserGoing1));
+
+            mediatorLiveDataWorkmatesInfo.addSource(mediatorLiveDataUsers, users -> combineUids(users,
+                    liveDataAttendiesUid.getValue()));
+            mediatorLiveDataWorkmatesInfo.addSource(liveDataAttendiesUid, uids -> combineUids(mediatorLiveDataUsers.getValue(),
+                    uids));
+        }
     }
 
-    private void combineUids(Map<String, User> users, List<Uid> uids) {
+    private void combineDetailsAndUserGoing(@Nullable Detail detail,
+                                            @Nullable Boolean isUserGoing) {
+        if(detail == null) {
+            return;
+        }
+
+        boolean resolvedIsUserGoing;
+
+        if(isUserGoing == null) {
+            resolvedIsUserGoing = false;
+        }else {
+            resolvedIsUserGoing = isUserGoing;
+        }
+
+        String name = detail.getResultDetail().getName();
+
+        String address = detail.getResultDetail().getFormattedAddress();
+
+        String uri;
+
+        String photoReference = detail.getResultDetail().getPhotos().get(0).getPhotoReference();
+        uri = uriBuilder.buildUri("https",
+                "maps.googleapis.com",
+                "maps/api/place/photo",
+                new Pair<>("key", "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs"),
+                new Pair<>("photoreference", photoReference),
+                new Pair<>("maxwidth", "1080"));
+
+        String id = detail.getResultDetail().getPlaceId();
+
+        String phoneNumber = detail.getResultDetail().getFormattedPhoneNumber();
+
+        String url = detail.getResultDetail().getUrl();
+
+        liveDataRestaurantDetailInfo.setValue(new RestaurantDetailInfo(name,
+                address,
+                uri,
+                id,
+                phoneNumber,
+                url,
+                resolvedIsUserGoing));
+    }
+
+    private void combineUids(@Nullable Map<String, User> users, @Nullable List<Uid> uids) {
         if (users == null || uids == null) {
             return;
         }
@@ -88,14 +126,11 @@ public class RestaurantDetailViewModel extends ViewModel {
             if (user == null) {
                 if (!alreadyFetchUids.contains(uid.getUid())) {
                     alreadyFetchUids.add(uid.getUid());
-                    mediatorLiveDataUsers.addSource(userRepository.getUser(uid.getUid()), new Observer<User>() {
-                        @Override
-                        public void onChanged(User user) {
-                                Map<String, User> map = mediatorLiveDataUsers.getValue();
-                                assert map != null;
-                                map.put(user.getUid(), user);
-                                mediatorLiveDataUsers.postValue(map);
-                        }
+                    mediatorLiveDataUsers.addSource(userRepository.getUser(uid.getUid()), user1 -> {
+                            Map<String, User> map = mediatorLiveDataUsers.getValue();
+                            assert map != null;
+                            map.put(user1.getUid(), user1);
+                            mediatorLiveDataUsers.postValue(map);
                     });
                 }
             }else {
@@ -127,46 +162,6 @@ public class RestaurantDetailViewModel extends ViewModel {
         this.uriBuilder = uriBuilder;
     }
 
-
-    private RestaurantDetailInfo map(@NonNull Detail result) {
-
-        String name = result.getResultDetail().getName();
-
-        String address = result.getResultDetail().getFormattedAddress();
-
-        String uri = null;
-
-        String photoReference = result.getResultDetail().getPhotos().get(0).getPhotoReference();
-        uri = uriBuilder.buildUri("https",
-                "maps.googleapis.com",
-                "maps/api/place/photo",
-                new Pair<>("key", "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs"),
-                new Pair<>("photoreference", photoReference),
-                new Pair<>("maxwidth", "1080"));
-
-        String id = result.getResultDetail().getPlaceId();
-
-        String phoneNumber = result.getResultDetail().getFormattedPhoneNumber();
-
-        String url = result.getResultDetail().getUrl();
-
-        boolean isUserGoing;
-        /*if(restaurantRepository.getCurrentUser(mAuth.getCurrentUser().getUid(), id).isSuccessful()) {
-            isUserGoing = true;
-        }else {
-            isUserGoing = false;
-        }*/
-        //TODO Voir avec Anthony
-
-        return new RestaurantDetailInfo(name,
-                address,
-                uri,
-                id,
-                phoneNumber,
-                url,
-                false);
-    }
-
     public LiveData<RestaurantDetailInfo> getLiveDataResultDetail() {
         return liveDataRestaurantDetailInfo;
     }
@@ -183,15 +178,10 @@ public class RestaurantDetailViewModel extends ViewModel {
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getPhotoUrl() != null) {
             userRepository.addPlaceIdAndRestaurantNameToTodayUser(mAuth.getCurrentUser().getUid(), id, restaurantName);
             restaurantRepository.deleteUserToRestaurant(mAuth.getCurrentUser().getUid(),
-                    new RestaurantRepository.OnDeletedUserCallback() {
-                        @Override
-                        public void onUserDeleted() {
-                            restaurantRepository.addUserToRestaurant(id,
-                                    restaurantName,
-                                    mAuth.getCurrentUser().getUid(),
-                                    mAuth.getCurrentUser().getDisplayName());
-                        }
-                    });
+                    () -> restaurantRepository.addUserToRestaurant(id,
+                            restaurantName,
+                            mAuth.getCurrentUser().getUid(),
+                            mAuth.getCurrentUser().getDisplayName()));
         }
     }
 }

@@ -1,16 +1,19 @@
 package paul.barthuel.go4lunch.ui.list_view;
 
+import androidx.annotation.ColorRes;
+
 public class RestaurantInfo {
 
-    private String name;
-    private String address;
-    private String openingHours;
-    private String distance;
-    private Double rating;
-    private String image;
-    private String id;
-    private String attendies;
-    private boolean isAttendiesVisible;
+    private final String name;
+    private final String address;
+    private final String openingHours;
+    private final String distance;
+    private final Double rating;
+    private final String image;
+    private final String id;
+    private final String attendies;
+    private final boolean isAttendiesVisible;
+    private int backgroundColor;
 
     public String getName() {
         return name;
@@ -46,6 +49,8 @@ public class RestaurantInfo {
         return isAttendiesVisible;
     }
 
+    public int getBackgroundColor() { return backgroundColor; }
+
 
     public RestaurantInfo(String name,
                           String address,
@@ -55,7 +60,8 @@ public class RestaurantInfo {
                           String image,
                           String id,
                           String attendies,
-                          boolean isAttendiesVisible) {
+                          boolean isAttendiesVisible,
+                          @ColorRes int backgroundColor) {
 
         this.name = name;
         this.address = address;
@@ -66,6 +72,7 @@ public class RestaurantInfo {
         this.id = id;
         this.attendies = attendies;
         this.isAttendiesVisible = isAttendiesVisible;
+        this.backgroundColor = backgroundColor;
     }
 
 }

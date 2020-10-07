@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-import paul.barthuel.go4lunch.ActualLocationRepository;
+import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
 import paul.barthuel.go4lunch.LiveDataTestUtil;
 import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
 import paul.barthuel.go4lunch.data.model.detail.Detail;

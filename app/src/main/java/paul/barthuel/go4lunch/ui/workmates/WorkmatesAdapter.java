@@ -17,7 +17,7 @@ import paul.barthuel.go4lunch.R;
 
 public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapter.ViewHolder> {
 
-    private Listener listener;
+    private final Listener listener;
 
     public WorkmatesAdapter(Listener listener) {
         super(new WorkmatesInfoDiffCallBack());
@@ -43,14 +43,13 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
         private final TextView mTextViewName;
         private final TextView mTextViewRestaurantName;
         private final ImageView mImageViewThumbnail;
-        private final View mRoot;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mTextViewName = itemView.findViewById(R.id.workmates_item_tv_username);
             mImageViewThumbnail = itemView.findViewById(R.id.workmates_item_iv_thumbnail);
-            mRoot = itemView.findViewById(R.id.workmates_item_cl);
+            View mRoot = itemView.findViewById(R.id.workmates_item_cl);
             mTextViewRestaurantName = itemView.findViewById(R.id.workmates_item_tv_restaurant_name);
         }
 
@@ -62,19 +61,9 @@ public class WorkmatesAdapter extends ListAdapter<WorkmatesInfo, WorkmatesAdapte
                     .load(workmatesInfo.getImage())
                     .apply(RequestOptions.circleCropTransform())
                     .into(mImageViewThumbnail);
-            mImageViewThumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onWorkmateInfoClick(workmatesInfo);
-                }
-            });
+            mImageViewThumbnail.setOnClickListener(v -> listener.onWorkmateInfoClick(workmatesInfo));
             mTextViewRestaurantName.setText(workmatesInfo.getRestaurantName());
-            mTextViewRestaurantName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onRestaurantClick(workmatesInfo.getPlaceId(), workmatesInfo.getRestaurantName());
-                }
-            });
+            mTextViewRestaurantName.setOnClickListener(v -> listener.onRestaurantClick(workmatesInfo.getPlaceId(), workmatesInfo.getRestaurantName()));
         }
     }
 

@@ -5,11 +5,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.util.Function;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -23,8 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import paul.barthuel.go4lunch.ActualLocationRepository;
+import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
+import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.data.firestore.restaurant.RestaurantRepository;
+import paul.barthuel.go4lunch.data.local.UserSearchRepository;
 import paul.barthuel.go4lunch.data.model.detail.Detail;
 import paul.barthuel.go4lunch.data.model.detail.Period;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
@@ -37,16 +37,16 @@ public class ListViewViewModel extends ViewModel {
     private final PlaceDetailRepository placeDetailRepository;
     private final UriBuilder uriBuilder;
     private final RestaurantRepository restaurantRepository;
-    private ActualLocationRepository actualLocationRepository;
+    private final UserSearchRepository userSearchRepository;
 
-    private LiveData<NearbyResponse> liveDataNearby;
-    private MediatorLiveData<Map<String, Detail>> mediatorRestaurantDetail = new MediatorLiveData<>();
-    private List<String> alreadyFetchId = new ArrayList<>();
+    private final LiveData<NearbyResponse> liveDataNearby;
+    private final MediatorLiveData<Map<String, Detail>> mediatorRestaurantDetail = new MediatorLiveData<>();
+    private final List<String> alreadyFetchId = new ArrayList<>();
 
-    private MediatorLiveData<Map<String, Integer>> mediatorRestaurantAttendies = new MediatorLiveData<>();
-    private List<String> alreadyFetchIdForAttendies = new ArrayList<>();
+    private final MediatorLiveData<Map<String, Integer>> mediatorRestaurantAttendies = new MediatorLiveData<>();
+    private final List<String> alreadyFetchIdForAttendies = new ArrayList<>();
 
-    private MediatorLiveData<List<RestaurantInfo>> mediatorRestaurantInfo = new MediatorLiveData<>();
+    private final MediatorLiveData<List<RestaurantInfo>> mediatorRestaurantInfo = new MediatorLiveData<>();
 
     LiveData<List<RestaurantInfo>> getUiModelsLiveData() {
         return mediatorRestaurantInfo;
@@ -56,66 +56,54 @@ public class ListViewViewModel extends ViewModel {
                              final NearbyRepository nearbyRepository,
                              final PlaceDetailRepository placeDetailRepository,
                              final RestaurantRepository restaurantRepository,
-                             final UriBuilder uriBuilder) {
+                             final UriBuilder uriBuilder,
+                             final UserSearchRepository userSearchRepository) {
 
-        mediatorRestaurantDetail.setValue(new HashMap<String, Detail>());
-        mediatorRestaurantAttendies.setValue(new HashMap<String, Integer>());
+        mediatorRestaurantDetail.setValue(new HashMap<>());
+        mediatorRestaurantAttendies.setValue(new HashMap<>());
         this.placeDetailRepository = placeDetailRepository;
-        this.actualLocationRepository = actualLocationRepository;
         this.restaurantRepository = restaurantRepository;
         this.uriBuilder = uriBuilder;
+        this.userSearchRepository = userSearchRepository;
 
+        LiveData<Location> locationLiveData = actualLocationRepository.getLocationLiveData();
+        LiveData<String> userSearchQueryLiveData = userSearchRepository.getUserSearchQueryLiveData();
         liveDataNearby = Transformations.switchMap(
                 actualLocationRepository.getLocationLiveData(),
-                new Function<Location, LiveData<NearbyResponse>>() {
-                    @Override
-                    public LiveData<NearbyResponse> apply(Location location) {
-                        return nearbyRepository.getNearbyForLocation(location);
-                    }
-                });
+                nearbyRepository::getNearbyForLocation);
 
-        mediatorRestaurantInfo.addSource(liveDataNearby, new Observer<NearbyResponse>() {
-            @Override
-            public void onChanged(NearbyResponse nearbyResponse) {
-                combineNearbyAndDetails(nearbyResponse,
-                        mediatorRestaurantDetail.getValue(),
-                        actualLocationRepository.getLocationLiveData().getValue(),
-                        mediatorRestaurantAttendies.getValue());
-            }
-        });
-        mediatorRestaurantInfo.addSource(mediatorRestaurantDetail, new Observer<Map<String, Detail>>() {
-            @Override
-            public void onChanged(Map<String, Detail> restaurantDetailMap) {
-                combineNearbyAndDetails(liveDataNearby.getValue(),
-                        restaurantDetailMap,
-                        actualLocationRepository.getLocationLiveData().getValue(),
-                        mediatorRestaurantAttendies.getValue());
-            }
-        });
-        mediatorRestaurantInfo.addSource(actualLocationRepository.getLocationLiveData(), new Observer<Location>() {
-            @Override
-            public void onChanged(Location location) {
-                combineNearbyAndDetails(liveDataNearby.getValue(),
-                        mediatorRestaurantDetail.getValue(),
-                        location,
-                        mediatorRestaurantAttendies.getValue());
-            }
-        });
-        mediatorRestaurantInfo.addSource(mediatorRestaurantAttendies, new Observer<Map<String, Integer>>() {
-            @Override
-            public void onChanged(Map<String, Integer> restaurantAttendies) {
-                combineNearbyAndDetails(liveDataNearby.getValue(),
-                        mediatorRestaurantDetail.getValue(),
-                        actualLocationRepository.getLocationLiveData().getValue(),
-                        restaurantAttendies);
-            }
-        });
+        mediatorRestaurantInfo.addSource(liveDataNearby, nearbyResponse -> combineNearbyAndDetails(nearbyResponse,
+                mediatorRestaurantDetail.getValue(),
+                locationLiveData.getValue(),
+                mediatorRestaurantAttendies.getValue(),
+                userSearchQueryLiveData.getValue()));
+        mediatorRestaurantInfo.addSource(mediatorRestaurantDetail, restaurantDetailMap -> combineNearbyAndDetails(liveDataNearby.getValue(),
+                restaurantDetailMap,
+                actualLocationRepository.getLocationLiveData().getValue(),
+                mediatorRestaurantAttendies.getValue(),
+                userSearchQueryLiveData.getValue()));
+        mediatorRestaurantInfo.addSource(locationLiveData, location -> combineNearbyAndDetails(liveDataNearby.getValue(),
+                mediatorRestaurantDetail.getValue(),
+                location,
+                mediatorRestaurantAttendies.getValue(),
+                userSearchQueryLiveData.getValue()));
+        mediatorRestaurantInfo.addSource(mediatorRestaurantAttendies, restaurantAttendies -> combineNearbyAndDetails(liveDataNearby.getValue(),
+                mediatorRestaurantDetail.getValue(),
+                locationLiveData.getValue(),
+                restaurantAttendies,
+                userSearchQueryLiveData.getValue()));
+        mediatorRestaurantInfo.addSource(userSearchQueryLiveData, userSearchQuery -> combineNearbyAndDetails(liveDataNearby.getValue(),
+                mediatorRestaurantDetail.getValue(),
+                locationLiveData.getValue(),
+                mediatorRestaurantAttendies.getValue(),
+                userSearchQuery));
     }
 
     private void combineNearbyAndDetails(@Nullable NearbyResponse nearbyResponse,
                                          @Nullable Map<String, Detail> restaurantDetailMap,
                                          @Nullable Location location,
-                                         @Nullable Map<String, Integer> restaurantAttendies) {
+                                         @Nullable Map<String, Integer> restaurantAttendies,
+                                         @Nullable String userSearchQuery) {
 
         if (nearbyResponse == null || location == null || restaurantDetailMap == null || restaurantAttendies == null) {
             return;
@@ -132,14 +120,11 @@ public class ListViewViewModel extends ViewModel {
                         alreadyFetchId.add(result.getPlaceId());
                         mediatorRestaurantDetail.addSource(
                                 placeDetailRepository.getDetailForRestaurantId(result.getPlaceId()),
-                                new Observer<Detail>() {
-                                    @Override
-                                    public void onChanged(Detail detail) {
-                                        Map<String, Detail> map = mediatorRestaurantDetail.getValue();
-                                        assert map != null;
-                                        map.put(detail.getResultDetail().getPlaceId(), detail);
-                                        Log.d("courgette", "combineNearbyAndDetails: fetched restaurant detail" + result.getPlaceId());
-                                    }
+                                detail1 -> {
+                                    Map<String, Detail> map = mediatorRestaurantDetail.getValue();
+                                    assert map != null;
+                                    map.put(detail1.getResultDetail().getPlaceId(), detail1);
+                                    Log.d("courgette", "combineNearbyAndDetails: fetched restaurant detail" + result.getPlaceId());
                                 });
 
                     }
@@ -151,18 +136,15 @@ public class ListViewViewModel extends ViewModel {
                         alreadyFetchIdForAttendies.add(result.getPlaceId());
                         mediatorRestaurantAttendies.addSource(
                                 restaurantRepository.getRestaurantAttendies(result.getPlaceId()),
-                                new Observer<Integer>() {
-                                    @Override
-                                    public void onChanged(Integer attendies) {
-                                        Map<String, Integer> map = mediatorRestaurantAttendies.getValue();
-                                        assert map != null;
-                                        map.put(result.getPlaceId(), attendies);
-                                        Log.d("courgette", "combineNearbyAndDetails: fetched restaurant attendies" + result.getPlaceId());
-                                    }
+                                attendies1 -> {
+                                    Map<String, Integer> map = mediatorRestaurantAttendies.getValue();
+                                    assert map != null;
+                                    map.put(result.getPlaceId(), attendies1);
+                                    Log.d("courgette", "combineNearbyAndDetails: fetched restaurant attendies" + result.getPlaceId());
                                 });
                     }
                 }
-                restaurantInfos.add(map(location, result, detail, attendies));
+                restaurantInfos.add(map(location, result, detail, attendies, userSearchQuery));
             }
         }
         mediatorRestaurantInfo.setValue(restaurantInfos);
@@ -171,7 +153,8 @@ public class ListViewViewModel extends ViewModel {
     private RestaurantInfo map(@NonNull Location location,
                                @NonNull Result result,
                                @Nullable Detail detail,
-                               @Nullable Integer attendies) {
+                               @Nullable Integer attendies,
+                               @Nullable String userSearchQuery) {
 
         String name = result.getName();
         String address = result.getVicinity();
@@ -205,7 +188,8 @@ public class ListViewViewModel extends ViewModel {
                         if (localTime.isAfter(formattedOpenTime) && localTime.isBefore(formattedCloseTime)) {
                             openingHours = "open until " + formattedCloseTime.toString();
                         } else {
-                            String nonFormattedOpenAtTime = periods.get(i + 1).getOpen().getTime();
+                            //TODO refaire algo (je pense que il ne se situe pas bien dans la derniere tranche horaire)
+                            String nonFormattedOpenAtTime = periods.get(i).getOpen().getTime();
                             LocalTime formattedOpenAtTime = LocalTime.parse(nonFormattedOpenAtTime, DateTimeFormatter.ofPattern("HHmm"));
                             formattedOpenAtTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
                             openingHours = "open at " + formattedOpenAtTime.toString();
@@ -221,7 +205,7 @@ public class ListViewViewModel extends ViewModel {
                 location.getLatitude(),
                 location.getLongitude()) + "m";
 
-        Double rating = (result.getRating() * 3) / 5;
+        double rating = (result.getRating() * 3) / 5;
         if (rating >= 2.50) {
             rating = 3.00;
         } else if (rating < 2.50 && rating >= 1.50) {
@@ -248,10 +232,14 @@ public class ListViewViewModel extends ViewModel {
         String attendiesAsAString = attendies == null ? "?" : String.valueOf(attendies);
 
         boolean isAttendiesVisible;
-        if (attendies == null || attendies == 0) {
-            isAttendiesVisible = false;
-        } else {
-            isAttendiesVisible = true;
+        isAttendiesVisible = attendies != null && attendies != 0;
+
+        int backGroundColor;
+
+        if (userSearchQuery != null && !userSearchQuery.isEmpty() && name.startsWith(userSearchQuery)) {
+            backGroundColor = R.color.selected_background_color;
+        }else {
+            backGroundColor = android.R.color.white;
         }
 
         return new RestaurantInfo(name,
@@ -262,7 +250,8 @@ public class ListViewViewModel extends ViewModel {
                 uri,
                 id,
                 attendiesAsAString,
-                isAttendiesVisible);
+                isAttendiesVisible,
+                backGroundColor);
     }
 
     private int getDayNumber() {

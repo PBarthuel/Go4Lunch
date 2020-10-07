@@ -18,7 +18,7 @@ import paul.barthuel.go4lunch.ui.custom_view.CustomRatingBar;
 
 public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, RestaurantInfoAdapter.ViewHolder> {
 
-    private Listener listener;
+    private final Listener listener;
 
     public RestaurantInfoAdapter(Listener listener) {
         super(new RestaurantInfoDiffCallBack());
@@ -49,8 +49,7 @@ public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, Restauran
         private final View mRoot;
         private final ImageView mImageViewThumbnail;
         private final CustomRatingBar mCustomRatingBar;
-
-
+        private final View mBackground;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +62,7 @@ public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, Restauran
             mRoot = itemView.findViewById(R.id.restaurant_description_item_cl);
             mImageViewThumbnail = itemView.findViewById(R.id.restaurant_description_item_iv_thumbnail);
             mCustomRatingBar = itemView.findViewById(R.id.restaurant_description_item_crb_rating);
+            mBackground = itemView.findViewById(R.id.restaurant_description_item_background);
         }
 
         private void bind(final RestaurantInfo restaurantInfo, final Listener listener) {
@@ -80,12 +80,8 @@ public class RestaurantInfoAdapter extends ListAdapter<RestaurantInfo, Restauran
             mCustomRatingBar.setStars(restaurantInfo.getRating());
             Log.d("courgette", "bind: name " + restaurantInfo.getName() + "rating " + restaurantInfo.getRating());
             Glide.with(mImageViewThumbnail).load(restaurantInfo.getImage()).into(mImageViewThumbnail);
-            mRoot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onRestaurantInfoClick(restaurantInfo);
-                }
-            });
+            mRoot.setOnClickListener(v -> listener.onRestaurantInfoClick(restaurantInfo));
+            mBackground.setBackgroundResource(restaurantInfo.getBackgroundColor());
         }
     }
 

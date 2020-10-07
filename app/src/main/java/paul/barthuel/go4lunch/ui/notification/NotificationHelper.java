@@ -9,11 +9,13 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+import paul.barthuel.go4lunch.R;
+
 public class NotificationHelper {
 
     private static final String channelID = "channelID";
     private static final String channelName = "Channel Name";
-    private Context context;
+    private final Context context;
 
     private NotificationManager mManager;
 
@@ -42,6 +44,7 @@ public class NotificationHelper {
     void displayNotification(String message) {
         Notification notification = new NotificationCompat.Builder(context, channelID)
                 .setContentTitle("Time to lunch !")
+                .setSmallIcon(R.drawable.ic_baseline_emoji_people_24)
                 .setContentText(message)
                 .build();
         getManager().notify(0, notification);
