@@ -1,6 +1,7 @@
 package paul.barthuel.go4lunch.ui.map_view;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -45,7 +47,8 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
                                         lunchMarker.getLatitude(),
                                         lunchMarker.getLongitude()
                                 )
-                        ).title(lunchMarker.getName())
+                        ).icon(BitmapDescriptorFactory.defaultMarker(lunchMarker.getBackGroundColor()))
+                                .title(lunchMarker.getName())
                 );
             }
         });
@@ -63,6 +66,7 @@ public class LocalisationFragment extends SupportMapFragment implements OnMapRea
         mViewModel.hasPermissions(checkPermissions());
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;

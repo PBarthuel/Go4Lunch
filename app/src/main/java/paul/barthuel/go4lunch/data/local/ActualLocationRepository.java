@@ -1,5 +1,6 @@
 package paul.barthuel.go4lunch.data.local;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Looper;
 
@@ -35,6 +36,7 @@ public class ActualLocationRepository {
         return mutableLiveData;
     }
 
+    @SuppressLint("MissingPermission")
     public void initLocation() {
 
         FusedLocationProviderClient mFusedLocation;

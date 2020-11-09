@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.threeten.bp.Clock;
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -24,6 +25,8 @@ import paul.barthuel.go4lunch.data.firestore.chat.dto.Message;
 public class ChatViewModel extends ViewModel {
 
     private final ChatRepository chatRepository;
+    private final Clock clock;
+    private final FirebaseAuth auth;
 
     private final MediatorLiveData<List<UiMessage>> liveDataMessages = new MediatorLiveData<>();
     private String workmateId;
@@ -38,14 +41,14 @@ public class ChatViewModel extends ViewModel {
                 "init() called with: wormateId = [" + workmateId + "]");
         this.workmateId = workmateId;
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            liveDataMessages.addSource(chatRepository.getChatForUsers(FirebaseAuth.getInstance().getCurrentUser().getUid(), workmateId),
+        if (auth.getCurrentUser() != null) {
+            liveDataMessages.addSource(chatRepository.getChatForUsers(auth.getCurrentUser().getUid(), workmateId),
                     messages -> {
                         List<UiMessage> uiMessages = new ArrayList<>(messages.size());
                         for (Message message : messages) {
                             String formattedDate;
                             LocalDateTime messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(message.getEpoch()), ZoneId.of("Europe/Paris"));
-                            if (LocalDate.now().equals(messageDate.toLocalDate())) {
+                            if (LocalDate.now(clock).equals(messageDate.toLocalDate())) {
                                 formattedDate = messageDate.format(DateTimeFormatter.ofPattern("'à 'HH:mm"));
                             } else {
                                 formattedDate = messageDate.format(DateTimeFormatter.ofPattern("'le 'dd/MM' à 'HH:mm"));
@@ -53,24 +56,28 @@ public class ChatViewModel extends ViewModel {
                             uiMessages.add(new UiMessage(message.getText(),
                                     formattedDate,
                                     message.getSenderName(),
-                                    message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())));
+                                    message.getSenderId().equals(auth.getCurrentUser().getUid())));
                         }
                         liveDataMessages.setValue(uiMessages);
                     });
         }
     }
 
-    public ChatViewModel(final ChatRepository chatRepository) {
+    public ChatViewModel(final ChatRepository chatRepository,
+                         final Clock clock,
+                         final FirebaseAuth auth) {
 
         this.chatRepository = chatRepository;
+        this.clock = clock;
+        this.auth = auth;
     }
 
     public void sendMessage(String message) {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            chatRepository.createChatMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+        if (auth.getCurrentUser() != null) {
+            chatRepository.createChatMessage(auth.getCurrentUser().getUid(),
                     workmateId,
-                    FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                    ZonedDateTime.now().toInstant().toEpochMilli(),
+                    auth.getCurrentUser().getDisplayName(),
+                    ZonedDateTime.now(clock).toInstant().toEpochMilli(),
                     message);
         }
     }

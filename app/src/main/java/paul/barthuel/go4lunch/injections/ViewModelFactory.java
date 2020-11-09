@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.threeten.bp.Clock;
+
 import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
 import paul.barthuel.go4lunch.MainViewModel;
 import paul.barthuel.go4lunch.ui.search_restaurant.SearchRestaurantViewModel;
@@ -100,7 +102,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     placeDetailRepository,
                     restaurantRepository,
                     new UriBuilder(),
-                    userSearchRepository);
+                    userSearchRepository,
+                    Clock.systemDefaultZone());
         }else if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)) {
             return (T) new RestaurantDetailViewModel(
                     placeDetailRepository,
@@ -115,7 +118,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T)new WorkmatesViewModel(userRepository,
                     FirebaseAuth.getInstance());
         }else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
-            return (T)new ChatViewModel(chatRepository);
+            return (T)new ChatViewModel(chatRepository,
+                    Clock.systemDefaultZone(),
+                    FirebaseAuth.getInstance());
         }else if (modelClass.isAssignableFrom(SearchRestaurantViewModel.class)) {
             return (T)new SearchRestaurantViewModel(autocompleteRepository,
                     actualLocationRepository,

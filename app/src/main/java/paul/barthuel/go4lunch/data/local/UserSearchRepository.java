@@ -5,8 +5,13 @@ import androidx.lifecycle.MutableLiveData;
 
 public class UserSearchRepository {
 
+    private static UserSearchRepository sInstance;
+
     public static UserSearchRepository getInstance() {
-        return new UserSearchRepository();
+        if(sInstance == null) {
+            sInstance = new UserSearchRepository();
+        }
+        return sInstance;
     }
 
     private final MutableLiveData<String> userSearchQueryLiveData = new MutableLiveData<>();

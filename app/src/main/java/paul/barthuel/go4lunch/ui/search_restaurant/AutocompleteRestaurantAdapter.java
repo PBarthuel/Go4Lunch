@@ -14,7 +14,9 @@ import paul.barthuel.go4lunch.R;
 
 public class AutocompleteRestaurantAdapter extends ListAdapter<String, AutocompleteRestaurantAdapter.ViewHolder> {
 
-    public AutocompleteRestaurantAdapter() {
+    private final OnAutocompleteTextListener onAutocompleteTextListener;
+
+    public AutocompleteRestaurantAdapter(OnAutocompleteTextListener onAutocompleteTextListener) {
         super(new DiffUtil.ItemCallback<String>() {
             @Override
             public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
@@ -26,6 +28,7 @@ public class AutocompleteRestaurantAdapter extends ListAdapter<String, Autocompl
                 return oldItem.equalsIgnoreCase(newItem);
             }
         });
+        this.onAutocompleteTextListener = onAutocompleteTextListener;
     }
 
     @NonNull
@@ -36,14 +39,17 @@ public class AutocompleteRestaurantAdapter extends ListAdapter<String, Autocompl
                 false));
     }
 
-    //TODO Supporter le click sur les nom de restaurants et aussi changer la tete de la recyclerView
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(getItem(position));
+        String text = getItem(position);
+        holder.textView.setText(text);
+        holder.textView.setOnClickListener(v -> onAutocompleteTextListener.onAutocompleteTextSelected(text));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
         private final TextView textView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.restaurant_autocomplete_row_tv);

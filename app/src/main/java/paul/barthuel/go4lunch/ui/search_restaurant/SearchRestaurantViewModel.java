@@ -1,6 +1,7 @@
 package paul.barthuel.go4lunch.ui.search_restaurant;
 
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -14,9 +15,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
 import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
+import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
 import paul.barthuel.go4lunch.data.local.UserSearchRepository;
 import paul.barthuel.go4lunch.data.model.autocomplet.Autocomplete;
 import paul.barthuel.go4lunch.data.model.autocomplet.Prediction;
@@ -25,16 +26,17 @@ import paul.barthuel.go4lunch.data.retrofit.AutocompleteRepository;
 public class SearchRestaurantViewModel extends ViewModel {
 
     private final AutocompleteRepository autocompleteRepository;
-    private final ActualLocationRepository actualLocationRepository;
     private final UserRepository userRepository;
     private final UserSearchRepository userSearchRepository;
 
-    private final MutableLiveData<String> userSearchQueryLiveData = new MutableLiveData<>();
+    private final MediatorLiveData<List<Prediction>> predictionsMediatorLiveData = new MediatorLiveData<>();
 
-    private final MediatorLiveData<List<String>> predictionMediatorLiveData = new MediatorLiveData<>();
+    private final MutableLiveData<String> selectedQueryLiveData = new MutableLiveData<>();
 
-    public MediatorLiveData<List<String>> getPredictionMediatorLiveData() {
-        return predictionMediatorLiveData;
+    private final MediatorLiveData<List<String>> uiModelsMediatorLiveData = new MediatorLiveData<>();
+
+    public MediatorLiveData<List<String>> getUiModelsMediatorLiveData() {
+        return uiModelsMediatorLiveData;
     }
 
     public SearchRestaurantViewModel(final AutocompleteRepository autocompleteRepository,
@@ -42,48 +44,56 @@ public class SearchRestaurantViewModel extends ViewModel {
                                      final UserRepository userRepository,
                                      final UserSearchRepository userSearchRepository) {
 
-        this.actualLocationRepository = actualLocationRepository;
         this.autocompleteRepository = autocompleteRepository;
         this.userRepository = userRepository;
         this.userSearchRepository = userSearchRepository;
 
+        LiveData<String> userSearchQueryLiveData = userSearchRepository.getUserSearchQueryLiveData();
         LiveData<Location> locationLiveData = actualLocationRepository.getLocationLiveData();
 
-        predictionMediatorLiveData.addSource(locationLiveData, new Observer<Location>() {
-            @Override
-            public void onChanged(Location location) {
-                combineForUserSearchQuery(userSearchQueryLiveData.getValue(),
-                        location);
-            }
-        });
-        predictionMediatorLiveData.addSource(userSearchQueryLiveData, new Observer<String>() {
-            @Override
-            public void onChanged(String userSearchQuery) {
-                combineForUserSearchQuery(userSearchQuery,
-                        locationLiveData.getValue());
-            }
-        });
+        predictionsMediatorLiveData.addSource(locationLiveData, location -> combineForPredictions(
+                location,
+                userSearchQueryLiveData.getValue()));
+
+        uiModelsMediatorLiveData.addSource(userSearchQueryLiveData, userSearchQuery -> combineForUserSearchQuery(
+                userSearchQuery,
+                predictionsMediatorLiveData.getValue(),
+                selectedQueryLiveData.getValue()));
+        uiModelsMediatorLiveData.addSource(selectedQueryLiveData, selectedQuery -> combineForUserSearchQuery(
+                userSearchQueryLiveData.getValue(),
+                predictionsMediatorLiveData.getValue(),
+                selectedQuery));
+        uiModelsMediatorLiveData.addSource(predictionsMediatorLiveData, predictions -> combineForUserSearchQuery(
+                userSearchQueryLiveData.getValue(),
+                predictions,
+                selectedQueryLiveData.getValue()));
     }
 
-    private void combineForUserSearchQuery(@Nullable String userSearchQuery, @Nullable Location location) {
-        if(userSearchQuery == null || location == null) {
+    private void combineForPredictions(Location location, String userSearchQuery) {
+
+        if (location != null && userSearchQuery != null) {
+            predictionsMediatorLiveData.addSource(autocompleteRepository.getAutocompleteForLocation(userSearchQuery, location), autocomplete -> predictionsMediatorLiveData.setValue(autocomplete.getPredictions()));
+        }
+
+    }
+
+    private void combineForUserSearchQuery(@Nullable String userSearchQuery,
+                                           @Nullable List<Prediction> predictions,
+                                           @Nullable String selectedQuery) {
+        if (userSearchQuery == null || predictions == null) {
             return;
         }
 
-        predictionMediatorLiveData.addSource(autocompleteRepository.getAutocompleteForLocation(userSearchQuery, location),
-                new Observer<Autocomplete>() {
-            @Override
-            public void onChanged(Autocomplete autocomplete) {
-                List<String> autocompleteResults =  new ArrayList<>();
-
-                if(autocomplete != null && autocomplete.getPredictions() != null) {
-                    for (Prediction prediction : autocomplete.getPredictions()) {
-                        autocompleteResults.add(prediction.getStructuredFormatting().getMainText());
-                    }
-                }
-                predictionMediatorLiveData.setValue(autocompleteResults);
+        if (userSearchQuery.equals(selectedQuery) || userSearchQuery.isEmpty()) {
+            uiModelsMediatorLiveData.setValue(new ArrayList<>());
+            Log.d("courgette", "combineForUserSearchQuery() called with: userSearchQuery = [" + userSearchQuery + "], selectedQuery = [" + selectedQuery + "]");
+        } else {
+            List<String> autocompleteResults = new ArrayList<>();
+            for (Prediction prediction : predictions) {
+                autocompleteResults.add(prediction.getStructuredFormatting().getMainText());
             }
-        });
+            uiModelsMediatorLiveData.setValue(autocompleteResults);
+        }
     }
 
     public LiveData<TodayUser> getCurrentTodayUserLiveData() {
@@ -96,7 +106,10 @@ public class SearchRestaurantViewModel extends ViewModel {
 
     public void onSearchQueryChange(String newText) {
         userSearchRepository.updateSearchQuery(newText);
-        userSearchQueryLiveData.setValue(newText);
+    }
+
+    public void onAutocompleteSelected(String selectedText) {
+        selectedQueryLiveData.setValue(selectedText);
     }
 }
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import org.threeten.bp.Clock;
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
@@ -37,7 +38,7 @@ public class ListViewViewModel extends ViewModel {
     private final PlaceDetailRepository placeDetailRepository;
     private final UriBuilder uriBuilder;
     private final RestaurantRepository restaurantRepository;
-    private final UserSearchRepository userSearchRepository;
+    private final Clock clock;
 
     private final LiveData<NearbyResponse> liveDataNearby;
     private final MediatorLiveData<Map<String, Detail>> mediatorRestaurantDetail = new MediatorLiveData<>();
@@ -57,17 +58,19 @@ public class ListViewViewModel extends ViewModel {
                              final PlaceDetailRepository placeDetailRepository,
                              final RestaurantRepository restaurantRepository,
                              final UriBuilder uriBuilder,
-                             final UserSearchRepository userSearchRepository) {
+                             final UserSearchRepository userSearchRepository,
+                             final Clock clock) {
 
         mediatorRestaurantDetail.setValue(new HashMap<>());
         mediatorRestaurantAttendies.setValue(new HashMap<>());
         this.placeDetailRepository = placeDetailRepository;
         this.restaurantRepository = restaurantRepository;
         this.uriBuilder = uriBuilder;
-        this.userSearchRepository = userSearchRepository;
+        this.clock = clock;
 
         LiveData<Location> locationLiveData = actualLocationRepository.getLocationLiveData();
         LiveData<String> userSearchQueryLiveData = userSearchRepository.getUserSearchQueryLiveData();
+
         liveDataNearby = Transformations.switchMap(
                 actualLocationRepository.getLocationLiveData(),
                 nearbyRepository::getNearbyForLocation);
@@ -118,8 +121,9 @@ public class ListViewViewModel extends ViewModel {
                     if (!alreadyFetchId.contains(result.getPlaceId())) {
                         Log.d("courgette", "combineNearbyAndDetails: fetching restaurant detail" + result.getPlaceId());
                         alreadyFetchId.add(result.getPlaceId());
+                        LiveData<Detail> detailLiveData = placeDetailRepository.getDetailForRestaurantId(result.getPlaceId());
                         mediatorRestaurantDetail.addSource(
-                                placeDetailRepository.getDetailForRestaurantId(result.getPlaceId()),
+                                detailLiveData,
                                 detail1 -> {
                                     Map<String, Detail> map = mediatorRestaurantDetail.getValue();
                                     assert map != null;
@@ -183,12 +187,11 @@ public class ListViewViewModel extends ViewModel {
                         LocalTime formattedCloseTime = LocalTime.parse(nonFormattedCloseTime, DateTimeFormatter.ofPattern("HHmm"));
                         formattedCloseTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
 
-                        LocalTime localTime = LocalTime.now();
+                        LocalTime localTime = LocalTime.now(clock);
 
                         if (localTime.isAfter(formattedOpenTime) && localTime.isBefore(formattedCloseTime)) {
                             openingHours = "open until " + formattedCloseTime.toString();
                         } else {
-                            //TODO refaire algo (je pense que il ne se situe pas bien dans la derniere tranche horaire)
                             String nonFormattedOpenAtTime = periods.get(i).getOpen().getTime();
                             LocalTime formattedOpenAtTime = LocalTime.parse(nonFormattedOpenAtTime, DateTimeFormatter.ofPattern("HHmm"));
                             formattedOpenAtTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
@@ -256,7 +259,7 @@ public class ListViewViewModel extends ViewModel {
 
     private int getDayNumber() {
         int dayNumber;
-        DayOfWeek day = LocalDate.now().getDayOfWeek();
+        DayOfWeek day = LocalDate.now(clock).getDayOfWeek();
         switch (day) {
             case SUNDAY:
                 dayNumber = 0;

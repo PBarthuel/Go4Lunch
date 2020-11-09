@@ -174,4 +174,8 @@ public class ResultDetail {
     public String getPlaceId() {
         return placeId;
     }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
 }

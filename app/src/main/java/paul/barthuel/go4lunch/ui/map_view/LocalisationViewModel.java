@@ -9,11 +9,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
-import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.data.local.UserSearchRepository;
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse;
 import paul.barthuel.go4lunch.data.model.nearby.Result;
@@ -22,7 +23,6 @@ import paul.barthuel.go4lunch.data.retrofit.NearbyRepository;
 public class LocalisationViewModel extends ViewModel {
 
     private final ActualLocationRepository actualLocationRepository;
-    private final UserSearchRepository userSearchRepository;
 
     private final MediatorLiveData<List<LunchMarker>> liveDataLunchMarker = new MediatorLiveData<>();
 
@@ -40,7 +40,6 @@ public class LocalisationViewModel extends ViewModel {
                                  final UserSearchRepository userSearchRepository) {
 
         this.actualLocationRepository = actualLocationRepository;
-        this.userSearchRepository = userSearchRepository;
 
         LiveData<Location> locationLiveData = actualLocationRepository.getLocationLiveData();
         LiveData<String> userSearchQueryLiveData = userSearchRepository.getUserSearchQueryLiveData();
@@ -49,18 +48,8 @@ public class LocalisationViewModel extends ViewModel {
                 locationLiveData,
                 nearbyRepository::getNearbyForLocation);
 
-        liveDataLunchMarker.addSource(liveDataNearby, new Observer<NearbyResponse>() {
-            @Override
-            public void onChanged(NearbyResponse nearbyResponse) {
-                map(nearbyResponse, userSearchQueryLiveData.getValue());
-            }
-        });
-        liveDataLunchMarker.addSource(userSearchQueryLiveData, new Observer<String>() {
-            @Override
-            public void onChanged(String userSearchQuery) {
-                map(liveDataNearby.getValue(), userSearchQuery);
-            }
-        });
+        liveDataLunchMarker.addSource(liveDataNearby, nearbyResponse -> map(nearbyResponse, userSearchQueryLiveData.getValue()));
+        liveDataLunchMarker.addSource(userSearchQueryLiveData, userSearchQuery -> map(liveDataNearby.getValue(), userSearchQuery));
     }
 
     private void map(
@@ -78,11 +67,10 @@ public class LocalisationViewModel extends ViewModel {
 
                 int backGroundColor;
 
-                //TODO mettre les bonnes couleur pour les marker
-                if (userSearchQuery != null && name.startsWith(userSearchQuery)) {
-                    backGroundColor = R.color.selected_background_color;
+                if (userSearchQuery != null && !userSearchQuery.isEmpty() && name.startsWith(userSearchQuery)) {
+                    backGroundColor = (int) BitmapDescriptorFactory.HUE_AZURE;
                 }else {
-                    backGroundColor = android.R.color.white;
+                    backGroundColor = (int) BitmapDescriptorFactory.HUE_RED;
                 }
 
                 lunchMarkers.add(new LunchMarker(latitude, longitude, name, backGroundColor));

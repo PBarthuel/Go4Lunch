@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView android:id="@+id/restaurant_autocomplete_row_tv"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/restaurant_autocomplete_row_tv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:padding="8dp"
+    android:textSize="12sp"
+    android:textStyle="bold"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    android:text="courgette"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" />
+    tools:text="courgette" />

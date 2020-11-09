@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,6 +41,7 @@ public class RestaurantDetailViewModelTest {
     private MutableLiveData<Detail> detailLiveData;
     private MutableLiveData<User> userLiveData;
     private MutableLiveData<List<Uid>> uidLiveData;
+    private MutableLiveData<Boolean> isUserGoingLiveData;
 
     @Mock
     FirebaseAuth auth;
@@ -69,20 +71,35 @@ public class RestaurantDetailViewModelTest {
         detailLiveData = new MutableLiveData<>();
         userLiveData = new MutableLiveData<>();
         uidLiveData = new MutableLiveData<>();
+        isUserGoingLiveData =  new MutableLiveData<>();
 
         Mockito.doReturn(detailLiveData).when(placeDetailRepository).getDetailForRestaurantId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
         Mockito.doReturn(userLiveData).when(userRepository).getUser("Inu2tJ6JZMb1sBvbOlFLk0zGlx53");
+        Mockito.doReturn(isUserGoingLiveData).when(restaurantRepository).isUserGoingToRestaurant(any(), any());
         Mockito.doReturn(uidLiveData).when(restaurantRepository).getUidsFromRestaurant("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
         Mockito.doReturn("courgette").when(uriBuilder).buildUri(any(), any(), any(), any());
 
-        restaurantDetailViewModel = new RestaurantDetailViewModel(placeDetailRepository, auth, restaurantRepository, userRepository, uriBuilder);
+        restaurantDetailViewModel = new RestaurantDetailViewModel(placeDetailRepository,
+                auth,
+                restaurantRepository,
+                userRepository,
+                uriBuilder);
     }
 
     @Test
     public void shouldMapCorrectlyOneDetail() throws InterruptedException {
         //Given
+        Mockito.doReturn(getDefaultUser()).when(auth).getCurrentUser();
+
         Detail detail = getRestaurantDetail();
         detailLiveData.setValue(detail);
+
+        List<Uid> uids = getUids();
+        uidLiveData.setValue(uids);
+
+        userLiveData.setValue(getUser());
+
+        isUserGoingLiveData.setValue(getIsUserGoing());
 
         restaurantDetailViewModel.init("ChIJQ0bNfR5u5kcR9Z0i41-E7sg", "Benoit Paris");
 
@@ -103,6 +120,7 @@ public class RestaurantDetailViewModelTest {
         resultDetail.setFormattedPhoneNumber("01 42 72 25 76");
         resultDetail.setUrl("https://maps.google.com/?cid=14478655399410179573");
         resultDetail.setPhotos(getPhoto());
+        resultDetail.setPlaceId("ChIJQ0bNfR5u5kcR9Z0i41-E7sg");
 
         Detail detail = new Detail();
         detail.setResultDetail(resultDetail);
@@ -119,9 +137,15 @@ public class RestaurantDetailViewModelTest {
         return photos;
     }
 
+    private Boolean getIsUserGoing() {
+        return true;
+    }
+
     @Test
     public void shouldCombineCorrectlyUids() throws InterruptedException {
         //Given
+        Mockito.doReturn(getDefaultUser()).when(auth).getCurrentUser();
+
         userLiveData.setValue(getUser());
 
         List<Uid> uids = getUids();
@@ -151,5 +175,11 @@ public class RestaurantDetailViewModelTest {
         uids.add(new Uid("Inu2tJ6JZMb1sBvbOlFLk0zGlx53",
                 "courgette"));
         return uids;
+    }
+
+    private FirebaseUser getDefaultUser() {
+        FirebaseUser firebaseUser = Mockito.mock(FirebaseUser.class);
+        Mockito.doReturn("id1").when(firebaseUser).getUid();
+        return firebaseUser;
     }
 }

@@ -59,14 +59,18 @@ public class RestaurantDetailViewModel extends ViewModel {
 
             LiveData<Detail> detail = placeDetailRepository.getDetailForRestaurantId(id);
 
-            liveDataRestaurantDetailInfo.addSource(detail, detail1 -> combineDetailsAndUserGoing(detail1,
+            liveDataRestaurantDetailInfo.addSource(detail, detail1 -> combineDetailsAndUserGoing(
+                    detail1,
                     isUserGoing.getValue()));
-            liveDataRestaurantDetailInfo.addSource(isUserGoing, isUserGoing1 -> combineDetailsAndUserGoing(detail.getValue(),
+            liveDataRestaurantDetailInfo.addSource(isUserGoing, isUserGoing1 -> combineDetailsAndUserGoing(
+                    detail.getValue(),
                     isUserGoing1));
 
-            mediatorLiveDataWorkmatesInfo.addSource(mediatorLiveDataUsers, users -> combineUids(users,
+            mediatorLiveDataWorkmatesInfo.addSource(mediatorLiveDataUsers, users -> combineUids(
+                    users,
                     liveDataAttendiesUid.getValue()));
-            mediatorLiveDataWorkmatesInfo.addSource(liveDataAttendiesUid, uids -> combineUids(mediatorLiveDataUsers.getValue(),
+            mediatorLiveDataWorkmatesInfo.addSource(liveDataAttendiesUid, uids -> combineUids(
+                    mediatorLiveDataUsers.getValue(),
                     uids));
         }
     }
@@ -114,7 +118,8 @@ public class RestaurantDetailViewModel extends ViewModel {
                 resolvedIsUserGoing));
     }
 
-    private void combineUids(@Nullable Map<String, User> users, @Nullable List<Uid> uids) {
+    private void combineUids(@Nullable Map<String, User> users,
+                             @Nullable List<Uid> uids) {
         if (users == null || uids == null) {
             return;
         }

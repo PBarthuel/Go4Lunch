@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,8 +25,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.List;
-
 import paul.barthuel.go4lunch.MainActivity;
 import paul.barthuel.go4lunch.R;
 import paul.barthuel.go4lunch.injections.ViewModelFactory;
@@ -37,9 +34,10 @@ import paul.barthuel.go4lunch.ui.notification.NotificationActivity;
 import paul.barthuel.go4lunch.ui.restaurant_detail.RestaurantDetailActivity;
 import paul.barthuel.go4lunch.ui.workmates.WorkmatesFragment;
 
-public class SearchRestaurantActivity extends AppCompatActivity {
+public class SearchRestaurantActivity extends AppCompatActivity implements OnAutocompleteTextListener {
 
     private SearchRestaurantViewModel mViewModel;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +50,12 @@ public class SearchRestaurantActivity extends AppCompatActivity {
 
         RecyclerView autocompleteRecyclerView = findViewById(R.id.search_restaurant_autocomplete_rv);
 
-        AutocompleteRestaurantAdapter autocompleteRestaurantAdapter = new AutocompleteRestaurantAdapter();
+        AutocompleteRestaurantAdapter autocompleteRestaurantAdapter = new AutocompleteRestaurantAdapter(this);
 
         autocompleteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         autocompleteRecyclerView.setAdapter(autocompleteRestaurantAdapter);
 
-        mViewModel.getPredictionMediatorLiveData().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> restaurantsAutocompleteNames) {
-                autocompleteRestaurantAdapter.submitList(restaurantsAutocompleteNames);
-            }
-        });
+        mViewModel.getUiModelsMediatorLiveData().observe(this, autocompleteRestaurantAdapter::submitList);
 
         Toolbar toolbar = findViewById(R.id.search_restaurant_toolbar);
         toolbar.setTitle("Map");
@@ -153,10 +146,9 @@ public class SearchRestaurantActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //TODO faire la searchView ici
         getMenuInflater().inflate(R.menu.action_bar_menu, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_activity_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.menu_activity_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -198,4 +190,9 @@ public class SearchRestaurantActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onAutocompleteTextSelected(String selectedText) {
+        searchView.setQuery(selectedText, false);
+        mViewModel.onAutocompleteSelected(selectedText);
+    }
 }

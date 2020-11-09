@@ -13,7 +13,7 @@ public class RestaurantInfo {
     private final String id;
     private final String attendies;
     private final boolean isAttendiesVisible;
-    private int backgroundColor;
+    private final int backgroundColor;
 
     public String getName() {
         return name;

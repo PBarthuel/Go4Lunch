@@ -6,10 +6,11 @@ import androidx.core.util.Pair;
 
 public class UriBuilder {
 
-    public String buildUri(String scheme,
-                           String authority,
-                           String path,
-                           Pair<String, String>... queryParameters) {
+    @SafeVarargs
+    public final String buildUri(String scheme,
+                                 String authority,
+                                 String path,
+                                 Pair<String, String>... queryParameters) {
 
         Uri.Builder uriBuilder = new Uri.Builder()
                 .scheme(scheme)
