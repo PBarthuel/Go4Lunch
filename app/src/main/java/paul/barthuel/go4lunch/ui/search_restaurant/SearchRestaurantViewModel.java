@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,7 +18,6 @@ import paul.barthuel.go4lunch.data.firestore.user.UserRepository;
 import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
 import paul.barthuel.go4lunch.data.local.ActualLocationRepository;
 import paul.barthuel.go4lunch.data.local.UserSearchRepository;
-import paul.barthuel.go4lunch.data.model.autocomplet.Autocomplete;
 import paul.barthuel.go4lunch.data.model.autocomplet.Prediction;
 import paul.barthuel.go4lunch.data.retrofit.AutocompleteRepository;
 
