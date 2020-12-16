@@ -1,6 +1,5 @@
 package paul.barthuel.go4lunch;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 

@@ -13,6 +13,8 @@ import androidx.work.WorkManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.threeten.bp.LocalTime;
+
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -62,8 +64,20 @@ public class NotificationActivity extends AppCompatActivity {
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
 
+        long delay;
+        if (LocalTime.now().getHour() < 11) {
+            delay = (11 - LocalTime.now().getHour()) * 60 + (60 - LocalTime.now().getMinute());
+        }else if(LocalTime.now().getHour() > 11 && LocalTime.now().getHour() < 12) {
+            delay = 60 - LocalTime.now().getMinute();
+        }else if(LocalTime.now().getHour() > 12) {
+            delay = (23 - LocalTime.now().getHour()) * 60 +  (60 - LocalTime.now().getMinute()) + 720;
+        }else {
+            delay = 0;
+        }
+
         saveRequest =
                 new PeriodicWorkRequest.Builder(NotificationWorker.class, 1, TimeUnit.DAYS)
+                        .setInitialDelay(delay, TimeUnit.MINUTES)
                         .setConstraints(constraints)
                         .build();
 
