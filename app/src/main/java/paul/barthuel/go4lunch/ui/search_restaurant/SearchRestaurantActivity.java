@@ -1,5 +1,6 @@
 package paul.barthuel.go4lunch.ui.search_restaurant;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,6 +40,7 @@ public class SearchRestaurantActivity extends AppCompatActivity implements OnAut
     private SearchRestaurantViewModel mViewModel;
     private SearchView searchView;
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +75,13 @@ public class SearchRestaurantActivity extends AppCompatActivity implements OnAut
                         NotificationActivity.class));
             }
             if (menuItem.getItemId() == R.id.nav_your_lunch) {
-                mViewModel.getCurrentTodayUserLiveData().observe(this, todayUser -> startActivity(RestaurantDetailActivity.navigate(SearchRestaurantActivity.this, todayUser.getPlaceId(), todayUser.getRestaurantName())));
+                    mViewModel.getCurrentTodayUserLiveData().observe(
+                            this, todayUser ->
+                                    startActivity(
+                                            RestaurantDetailActivity.navigate(
+                                                    SearchRestaurantActivity.this,
+                                                    todayUser.getPlaceId(),
+                                                    todayUser.getRestaurantName())));
             }
             return false;
         });
