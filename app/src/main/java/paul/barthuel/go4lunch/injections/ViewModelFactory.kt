@@ -90,7 +90,7 @@ class ViewModelFactory private constructor(
                 RestaurantRepository(),
                 ChatRepository(),
                 AutocompleteRepository(),
-                UserSearchRepository.getInstance()
+                UserSearchRepository.instance
         )
     }
 }

@@ -55,7 +55,7 @@ class SearchRestaurantViewModel(private val autocompleteRepository: Autocomplete
             null
         }
 
-    fun onSearchQueryChange(newText: String?) {
+    fun onSearchQueryChange(newText: String) {
         userSearchRepository.updateSearchQuery(newText)
     }
 
