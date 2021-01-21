@@ -15,7 +15,7 @@ class ChatViewModel(private val chatRepository: ChatRepository,
                     private val clock: Clock,
                     private val auth: FirebaseAuth) : ViewModel() {
     private val liveDataMessages = MediatorLiveData<List<UiMessage>>()
-    private var workmateId: String? = null
+    private lateinit var workmateId: String
     val uiModelsLiveData: LiveData<List<UiMessage>>
         get() = liveDataMessages
 
@@ -46,11 +46,15 @@ class ChatViewModel(private val chatRepository: ChatRepository,
 
     fun sendMessage(message: String?) {
         if (auth.currentUser != null) {
-            chatRepository.createChatMessage(auth.currentUser!!.uid,
-                    workmateId,
-                    auth.currentUser!!.displayName,
-                    ZonedDateTime.now(clock).toInstant().toEpochMilli(),
-                    message)
+            if (message != null) {
+                auth.currentUser!!.displayName?.let {
+                    chatRepository.createChatMessage(auth.currentUser!!.uid,
+                            workmateId,
+                            it,
+                            ZonedDateTime.now(clock).toInstant().toEpochMilli(),
+                            message)
+                }
+            }
         }
     }
 
