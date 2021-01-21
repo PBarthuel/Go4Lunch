@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'jacoco'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android.applicationVariants.all { variant ->
     def variantName = variant.name.capitalize()
@@ -113,5 +115,17 @@ dependencies {
     testImplementation "android.arch.core:core-testing:1.1.1"
 
     testImplementation 'org.threeten:threetenbp:1.4.5'
+
+    // Kotlin 2/2
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // Kotlin - Android
+    implementation "androidx.core:core-ktx:1.5.0-beta01"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-rc01"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    // Kotlin - Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
 
 }
