@@ -128,4 +128,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
 
+    implementation("io.reactivex.rxjava3:rxkotlin:3.x.y")
+
 }
