@@ -53,7 +53,7 @@ public class RestaurantDetailFragment extends Fragment implements WorkmatesAdapt
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(RestaurantDetailViewModel.class);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.Companion.getInstance()).get(RestaurantDetailViewModel.class);
 
     }
 

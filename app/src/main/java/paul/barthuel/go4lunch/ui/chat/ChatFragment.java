@@ -36,7 +36,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(ChatViewModel.class);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.Companion.getInstance()).get(ChatViewModel.class);
         if (getArguments() != null) {
             mViewModel.init(getArguments().getString(KEY_WORKMATE_ID));
         }

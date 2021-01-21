@@ -7,7 +7,7 @@ public class RestaurantDetailInfo {
     private final String id;
     private final String phoneNumber;
     private final String url;
-    private final boolean isUserGoing;
+    private final Boolean isUserGoing;
 
     public String getName() {
         return name;
@@ -33,7 +33,7 @@ public class RestaurantDetailInfo {
         return url;
     }
 
-    public boolean getIsUserGoing() { return isUserGoing; }
+    public Boolean getIsUserGoing() { return isUserGoing; }
 
     public RestaurantDetailInfo(String name,
                                 String address,
@@ -41,7 +41,7 @@ public class RestaurantDetailInfo {
                                 String id,
                                 String phoneNumber,
                                 String url,
-                                boolean isUserGoing) {
+                                Boolean isUserGoing) {
 
         this.name = name;
         this.address = address;
