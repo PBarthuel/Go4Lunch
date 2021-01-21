@@ -20,6 +20,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // initialize for any
+        AndroidThreeTen.init(this);
 
         val context: Context = MainApplication.applicationContext()
     }
