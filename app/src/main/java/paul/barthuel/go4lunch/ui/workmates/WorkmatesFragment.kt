@@ -18,7 +18,7 @@ class WorkmatesFragment : Fragment(), WorkmatesAdapter.Listener {
     private var mViewModel: WorkmatesViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(WorkmatesViewModel::class.java)
+        mViewModel = ViewModelProvider(this, ViewModelFactory.instance).get(WorkmatesViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater,

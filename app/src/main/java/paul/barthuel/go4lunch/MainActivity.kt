@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_main)
         mainViewModel = ViewModelProvider(this,
-                ViewModelFactory.getInstance()).get(MainViewModel::class.java)
+                ViewModelFactory.instance).get(MainViewModel::class.java)
         // Set the dimensions of the sign-in button.
         val signInButton = findViewById<SignInButton>(R.id.sign_in_google_button)
         signInButton.setSize(SignInButton.SIZE_STANDARD)

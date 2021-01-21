@@ -41,7 +41,7 @@ class SearchRestaurantActivity : AppCompatActivity(), OnAutocompleteTextListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_restaurant)
-        mViewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(SearchRestaurantViewModel::class.java)
+        mViewModel = ViewModelProvider(this, ViewModelFactory.instance).get(SearchRestaurantViewModel::class.java)
         val bottomNavView = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
         val autocompleteRecyclerView = findViewById<RecyclerView>(R.id.search_restaurant_autocomplete_rv)
         val autocompleteRestaurantAdapter = AutocompleteRestaurantAdapter(this)

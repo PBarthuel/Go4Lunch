@@ -22,7 +22,7 @@ class LocalisationFragment : SupportMapFragment(), OnMapReadyCallback {
     private var googleMap: GoogleMap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel::class.java)
+        mViewModel = ViewModelProvider(this, ViewModelFactory.instance).get(LocalisationViewModel::class.java)
         mViewModel!!.uiModelsLiveData.observe(this, Observer { lunchMarkers: List<LunchMarker> ->
             lunchMarkers.forEach { lunchMarker ->
                 googleMap!!.addMarker(
