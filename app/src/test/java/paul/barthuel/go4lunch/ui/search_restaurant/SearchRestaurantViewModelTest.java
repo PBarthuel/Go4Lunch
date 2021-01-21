@@ -95,7 +95,7 @@ public class SearchRestaurantViewModelTest {
         autocompleteLiveData.setValue(getAutocomplete());
 
         //When
-        List<String> predictions = LiveDataTestUtil.getOrAwaitValue(searchRestaurantViewModel.getUiModelsMediatorLiveData(), 1);
+        List<String> predictions = LiveDataTestUtil.getOrAwaitValue(searchRestaurantViewModel.uiModelsMediatorLiveData, 1);
 
         //Then
         assertEquals("Benoit Paris", predictions.get(0));
@@ -120,7 +120,7 @@ public class SearchRestaurantViewModelTest {
         autocompleteLiveData.setValue(getAutocomplete());
 
         //When
-        List<String> predictions = LiveDataTestUtil.getOrAwaitValue(searchRestaurantViewModel.getUiModelsMediatorLiveData(), 1);
+        List<String> predictions = LiveDataTestUtil.getOrAwaitValue(searchRestaurantViewModel.uiModelsMediatorLiveData, 1);
 
         //Then
     }
