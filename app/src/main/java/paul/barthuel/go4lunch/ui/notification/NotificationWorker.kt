@@ -24,12 +24,12 @@ class NotificationWorker(context: Context, workerParams: WorkerParameters) : Wor
                                 .currentUser
                                 ?.uid)
                 if (todayUser != null) {
-                    val service = RetrofitService.getInstance().googlePlacesAPI
+                    val service = RetrofitService.instance?.googlePlacesAPI
                     try {
-                        val detail = service.getDetailSearch(todayUser.placeId,
+                        val detail = service?.getDetailSearch(todayUser.placeId,
                                 "formatted_address,name",
-                                "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs").execute()
-                        val detailSync = detail.body()
+                                "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs")?.execute()
+                        val detailSync = detail?.body()
                         val uids = restaurantRepository.getUidsSync(todayUser.placeId)
                         val allWorkmatesNames = StringBuilder()
                         if (uids != null) {

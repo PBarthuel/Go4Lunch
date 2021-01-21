@@ -100,7 +100,7 @@ class ListViewViewModel(actualLocationRepository: ActualLocationRepository,
                     userSearchQuery: String?): RestaurantInfo {
         val name = result.name
         val address = result.vicinity
-        var openingHours: String = "unknow"
+        var openingHours = "unknow"
         val periods: List<Period>
         var period: Period
         if (detail == null) {
@@ -219,7 +219,11 @@ class ListViewViewModel(actualLocationRepository: ActualLocationRepository,
         val locationLiveData = actualLocationRepository.locationLiveData
         val userSearchQueryLiveData = userSearchRepository.userSearchQueryLiveData
         liveDataNearby = Transformations.switchMap(
-                actualLocationRepository.locationLiveData) { location: Location? -> nearbyRepository.getNearbyForLocation(location) }
+                actualLocationRepository.locationLiveData) { location: Location? ->
+            location?.let {
+                nearbyRepository.getNearbyForLocation(it)
+            }
+        }
         mediatorRestaurantInfo.addSource(liveDataNearby) { nearbyResponse: NearbyResponse? ->
             combineNearbyAndDetails(nearbyResponse,
                     mediatorRestaurantDetail.value,

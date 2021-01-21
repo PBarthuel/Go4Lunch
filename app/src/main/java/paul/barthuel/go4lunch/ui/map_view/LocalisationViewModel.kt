@@ -63,7 +63,11 @@ class LocalisationViewModel(private val actualLocationRepository: ActualLocation
         val locationLiveData = actualLocationRepository.locationLiveData
         val userSearchQueryLiveData = userSearchRepository.userSearchQueryLiveData
         liveDataNearby = Transformations.switchMap(
-                locationLiveData) { location: Location? -> nearbyRepository.getNearbyForLocation(location) }
+                locationLiveData) { location: Location? ->
+            location?.let {
+                nearbyRepository.getNearbyForLocation(it)
+            }
+        }
         liveDataLunchMarker.addSource(liveDataNearby) { nearbyResponse: NearbyResponse? -> map(nearbyResponse, userSearchQueryLiveData.value) }
         liveDataLunchMarker.addSource(userSearchQueryLiveData) { userSearchQuery: String? -> map(liveDataNearby.value, userSearchQuery) }
     }
