@@ -21,8 +21,6 @@ class MainApplication : Application() {
         super.onCreate()
         // initialize for any
 
-        // Use ApplicationContext.
-        // example: SharedPreferences etc...
         val context: Context = MainApplication.applicationContext()
     }
 }

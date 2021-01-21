@@ -24,7 +24,7 @@ class LocalisationFragment : SupportMapFragment(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         mViewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(LocalisationViewModel::class.java)
         mViewModel!!.uiModelsLiveData.observe(this, Observer { lunchMarkers: List<LunchMarker> ->
-            for (lunchMarker in lunchMarkers) {
+            lunchMarkers.forEach { lunchMarker ->
                 googleMap!!.addMarker(
                         MarkerOptions().position(
                                 LatLng(
