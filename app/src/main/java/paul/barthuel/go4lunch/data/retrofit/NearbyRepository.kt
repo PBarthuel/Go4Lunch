@@ -3,12 +3,14 @@ package paul.barthuel.go4lunch.data.retrofit
 import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.reactivex.rxjava3.core.Observable
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class NearbyRepository {
+
     fun getNearbyForLocation(location: Location): LiveData<NearbyResponse> {
         val liveData = MutableLiveData<NearbyResponse>()
         RetrofitService.instance?.googlePlacesAPI?.getNearbySearch(
@@ -28,5 +30,15 @@ class NearbyRepository {
                     }
                 })
         return liveData
+    }
+
+
+
+    fun getNearby(location: Location): Observable<NearbyResponse> {
+        return RetrofitService.instance!!.googlePlacesAPI.getNearbySearchRx(
+                location.latitude.toString() + "," + location.longitude,
+                500,
+                "restaurant",
+                "AIzaSyDf9lQFMPnggxP8jYVT8NvGxmSQjuhNrNs")
     }
 }
