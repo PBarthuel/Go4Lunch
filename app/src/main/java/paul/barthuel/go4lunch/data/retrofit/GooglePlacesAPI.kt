@@ -1,6 +1,6 @@
 package paul.barthuel.go4lunch.data.retrofit
 
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import paul.barthuel.go4lunch.data.model.autocomplet.Autocomplete
 import paul.barthuel.go4lunch.data.model.detail.Detail
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse
@@ -34,6 +34,6 @@ interface GooglePlacesAPI {
     fun getNearbySearchRx(@Query("location") location: String?,
                           @Query("radius") radius: Int,
                           @Query("type") type: String?,
-                          @Query("key") key: String?): Observable<NearbyResponse>
+                          @Query("key") key: String?): Single<NearbyResponse>
 
 }

@@ -25,7 +25,7 @@ class LocalisationFragment : SupportMapFragment(), OnMapReadyCallback {
         mViewModel = ViewModelProvider(this, ViewModelFactory.instance)
                 .get(LocalisationViewModel::class.java)
 
-        mViewModel!!.uiModelsLiveData.observe(
+        /*mViewModel!!.uiModelsLiveData.observe(
                 this, Observer { lunchMarkers: List<LunchMarker> ->
             lunchMarkers.forEach { lunchMarker ->
                 googleMap!!.addMarker(
@@ -38,7 +38,22 @@ class LocalisationFragment : SupportMapFragment(), OnMapReadyCallback {
                                 .title(lunchMarker.name)
                 )
             }
-        })
+        })*/
+        mViewModel!!.resultListObservable.subscribe { it ->
+            it.forEach {
+                googleMap!!.addMarker(
+                        MarkerOptions().position(
+                                LatLng(
+                                        it.latitude,
+                                        it.longitude
+                                )
+                        ).icon(BitmapDescriptorFactory.defaultMarker(/*lunchMarker.backGroundColor.toFloat()*/))
+                                .title(it.name)
+                )
+
+
+            }
+        }
     }
 
     override fun onActivityCreated(bundle: Bundle?) {

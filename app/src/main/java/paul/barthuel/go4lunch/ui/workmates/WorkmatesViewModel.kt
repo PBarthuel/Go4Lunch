@@ -10,7 +10,9 @@ import paul.barthuel.go4lunch.data.firestore.user.dto.User
 import java.util.*
 
 class WorkmatesViewModel(userRepository: UserRepository, private val auth: FirebaseAuth) : ViewModel() {
+
     private val mediatorLiveDataWorkmates = MediatorLiveData<List<WorkmatesInfo>>()
+
     private fun map(users: List<User>?,
                     todayUsers: List<TodayUser>?): List<WorkmatesInfo> {
         val workmatesInfos: MutableList<WorkmatesInfo> = ArrayList()

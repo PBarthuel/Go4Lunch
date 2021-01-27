@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import paul.barthuel.go4lunch.data.model.nearby.NearbyResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,9 +33,7 @@ class NearbyRepository {
         return liveData
     }
 
-
-
-    fun getNearby(location: Location): Observable<NearbyResponse> {
+    fun getNearbyForLoc(location: Location): Single<NearbyResponse> {
         return RetrofitService.instance!!.googlePlacesAPI.getNearbySearchRx(
                 location.latitude.toString() + "," + location.longitude,
                 500,

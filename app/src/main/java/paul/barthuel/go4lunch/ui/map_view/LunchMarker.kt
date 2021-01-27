@@ -4,5 +4,5 @@ import androidx.annotation.ColorRes
 
 class LunchMarker(val latitude: Double,
                   val longitude: Double,
-                  val name: String,
-                  @param:ColorRes val backGroundColor: Int) 
+                  val name: String/*,
+                  @param:ColorRes val backGroundColor: Int*/)

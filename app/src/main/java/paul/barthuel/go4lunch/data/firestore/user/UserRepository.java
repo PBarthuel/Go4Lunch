@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import paul.barthuel.go4lunch.data.firestore.user.dto.TodayUser;
 import paul.barthuel.go4lunch.data.firestore.user.dto.User;
 
